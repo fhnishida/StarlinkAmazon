@@ -1,8 +1,8 @@
 # Replication codes for "Does access to Starlink improve criminal capability in the Amazon?" (2026)
-### by Borges, Komatsu, Maturano, Nishida, and Menezes Filho
+## by Borges, Komatsu, Maturano, Nishida, and Menezes Filho
 
 
-## `starlink_dataframe.R` — build analytical dataset
+### `starlink_dataframe.R` — build analytical dataset
 Builds the municipality-year analytical dataset and all intermediate processed data (DETER, enforcement, Starlink/GEO subscriptions, PM, climate, mortality, MapBiomas transitions, soy potential) and saves `datasets/processed/analysis_dataset.dta`.
 
 **What it does:**
