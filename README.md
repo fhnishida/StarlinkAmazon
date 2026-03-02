@@ -1,6 +1,11 @@
 # Replication codes for "Does access to Starlink improve criminal capability in the Amazon?" (2026)
 ## by Borges, Komatsu, Maturano, Nishida, and Menezes Filho
 
+### How to download required datasets:
+
+
+
+---
 
 ### `starlink_dataframe.R` — build analytical dataset
 
@@ -35,13 +40,13 @@ Builds the municipality-year analytical dataset and all intermediate processed d
 * **Reproducibility:** script writes intermediate RDS files so downstream steps can be rerun without repeating costly raster extractions.
 
 
-
+---
 
 ### `starlink_results.Rmd` — run analyses and generate figures/tables (R Markdown)
 
 Reproduces all estimation results, figures, and supplementary tables for the paper and renders an HTML report with tables, maps, event-study/placebo checks, heterogeneity plots, and first-stage diagnostics.
 
-**What it does (short):**
+**What it does:**
 
 * Loads the pre-built analytical dataset (`datasets/processed/analysis_dataset.dta`) and required processed RDS pieces.
 * Constructs model-ready variables (normalizations, year × coverarea instruments, shares, etc.).
