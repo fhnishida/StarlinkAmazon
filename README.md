@@ -5,72 +5,170 @@
 
 ### How to download required datasets
 
-**All files go into the repository `datasets/` folder.** The script expects that path.
-
-1. **Amazon municipalities shapefile (Terrabrasilis / IBGE)**
-   URL: `https://terrabrasilis.dpi.inpe.br/download/dataset/legal-amz-aux/vector/municipalities_legal_amazon.zip`
-   How to download: open the URL → locate **municipalities_legal_amazon.zip** in the file list → click *Download* (or right-click & *Save link as...*). Save the ZIP to your `datasets/` folder.
-
-2. **Municipal population — IBGE (SIDRA, table 4714)**
-   URL: `https://sidra.ibge.gov.br/tabela/4714`
-   How to download: open the SIDRA page → choose the year/columns you want (set the year to 2022) → click **Download** → select **CSV (US)** and tick **Exibir códigos de territórios** → Save file as `tabela4714.csv` in `datasets/`.
-
-3. **South America coastline (ANA / SNIRH — Linha de Costa)**
-   Metadata / catalog: `https://metadados.snirh.gov.br/geonetwork/srv/por/catalog.search#/metadata/0f57c8a0-6a0f-4283-8ce3-114ba904b9fe`
-   How to download: open the metadata page → find the dataset **Linha de Costa / geoft_bho_2017_linha_costa** → click the download or data access link (GeoPackage) → download the `.gpkg` and place it in `datasets/`.
-
-4. **Brasília localities KML (IBGE)**
-   Info / page: `https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/27385-localidades.html`
-   How to download: open the IBGE Localidades page → navigate to *Municípios* or *KML downloads* → select Distrito Federal / Brasília → download the KML (or ZIP) and save into `datasets/`.
-
-5. **Mobile coverage (Cobertura móvel — dados.gov.br)**
-   URL / dataset page: `https://dados.gov.br/dados/conjuntos-dados/cobertura_movel`
-   How to download: open the dataset page → click **Download** or the link to the provided ZIP → download the zip that contains `Atributos_Setores_Censo_2010.csv` and `Cobertura_2021_11_Setores.csv` → save ZIP into `datasets/`.
-
-6. **DETER forest alerts (INPE / Terrabrasilis DETER)**
-   Landing: `https://terrabrasilis.dpi.inpe.br/downloads/`
-   How to download: open the Terrabrasilis downloads page → look for **DETER (Amazon / DETER-AMZ)** → select the *public* DETER shapefile package (e.g., `deter-amz-public-YYYYmmdd.zip`) → click **Download** → place ZIP in `datasets/`.
-
-7. **IBAMA enforcement — Autos de infração (dados.gov.br)**
-   Dataset page: `https://dados.gov.br/dados/conjuntos-dados/fiscalizacao-auto-de-infracao`
-   How to download: open the page → download the CSV(s) for each year (or use the API/Download button) → name files `auto_infracao_ano_2016.csv` … `auto_infracao_ano_2024.csv` and compress them into `auto_infracao_csv.zip` if desired → save into `datasets/`.
-
-8. **ICMBio enforcement (Autos de Infração shapefiles)**
-   Info / download: `https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais/mapa-tematico-e-dados-geoestatisticos-das-unidades-de-conservacao-federais`
-   How to download: open the ICMBio geospatial data page → find the **Autos de Infração** shapefile package → click to download the shapefile ZIP → save it into `datasets/`.
-
-9. **Acessos — Banda Larga Fixa (Anatel / dados.gov.br) — STARLINK & GEO satellite**
-   Dataset page: `https://dados.gov.br/dados/conjuntos-dados/acessos---banda-larga-fixa`
-   How to download: open page → download yearly CSVs named `Acessos_Banda_Larga_Fixa_YYYY.csv` (2015–2024 ranges) → compress into `acessos_banda_larga_fixa.zip` (script uses those CSV names inside a zip) → save into `datasets/`.
-
-10. **MapBiomas coverage TIFFs (annual land-cover)**
-    Example direct link pattern: `https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10/lulc/coverage/brazil_coverage_2024.tif`
-    How to download: open MapBiomas site (`https://mapbiomas.org/`) or use the Google Cloud link above → download `brazil_coverage_YYYY.tif` for 2016–2024 → save files into `datasets/mapbiomas/`.
-
-11. **CAMS particulate matter (PM1 / PM2.5 / PM10) — Copernicus / CAMS**
-    Portals: `https://cds.climate.copernicus.eu/` and `https://atmosphere.copernicus.eu/`
-    How to download: use the Copernicus Atmosphere Data Store (CDS) or CAMS portal → search for particulate matter / reanalysis over Brazil → request NetCDF product for 2016–2024 (or use the prepared aggregated files if available) → download `PM1_BR_2016_2024.nc`, `PM2.5_BR_2016_2024.nc`, `PM10_BR_2016_2024.nc` (or similarly named files) → save into `datasets/`. (If using the CDS API, follow CDS API instructions to retrieve multi-year NetCDF.)
-
-12. **CHIRTS-ERA5 Tmax (monthly GeoTIFFs)**
-    URL: `https://www.chc.ucsb.edu/data/chirts-era5`
-    How to download: open CHC page → navigate to CHIRTS-ERA5 Tmax product → select monthly TIFFs for the required years → download the `.tif` files and put them into `datasets/chirts-era5/`.
-
-13. **CHIRPS precipitation monthly TIFFs**
-    URL: `https://data.chc.ucsb.edu/products/CHIRPS/v3.0/`
-    How to download: open CHIRPS product page → download monthly TIFFs for Latin America / Brazil for 2016–2024 → save files into `datasets/chirps-v3.0/`.
-
-14. **SIM mortality (DATASUS “Mortalidade Geral YYYY” CSVs)**
-    URL: `https://dadosabertos.saude.gov.br/dataset/sim`
-    How to download: open SIM dataset page → find *Mortalidade Geral* files by year → download CSV for each year 2017–2024 → optionally compress them into `deaths.zip` → save into `datasets/`.
-
-15. **FAO-GAEZ soy potential raster (GAEZ v5)**
-    Portal: `https://gaez.fao.org/` (FAO GAEZ)
-    How to download: open GAEZ data portal → search for the **Soy attainable yield (high-tech)** raster (RES05…SOY.HRLM) → select the map product and download the GeoTIFF → save into `datasets/` with the filename referenced in the script (or rename appropriately).
+> **Important:** Download all files below and place them in the repository `datasets/` folder. Keep original filenames whenever possible, as the script expects specific names.
 
 
-### Final notes
+#### 1. Amazon Municipalities (Legal Amazon shapefile)
 
-* 
+**Source:** Terrabrasilis / INPE
+**Download:**
+👉 [https://terrabrasilis.dpi.inpe.br/download/dataset/legal-amz-aux/vector/municipalities_legal_amazon.zip](https://terrabrasilis.dpi.inpe.br/download/dataset/legal-amz-aux/vector/municipalities_legal_amazon.zip)
+
+**How to download:**
+Open the link → download `municipalities_legal_amazon.zip`.
+
+
+
+#### 2. Municipal Population (IBGE – SIDRA Table 4714)
+
+**Source:** IBGE SIDRA
+**Access:**
+👉 [https://sidra.ibge.gov.br/tabela/4714](https://sidra.ibge.gov.br/tabela/4714)
+
+**How to download:**
+Open link → select year **2022** → click **Download** → choose **CSV (US)** → check **“Exibir códigos de territórios”** → save as `tabela4714.csv`.
+
+
+
+#### 3. South America Coastline (Linha de Costa – ANA)
+
+**Source:** SNIRH / ANA
+**Metadata page:**
+👉 [https://metadados.snirh.gov.br/geonetwork/srv/por/catalog.search#/metadata/0f57c8a0-6a0f-4283-8ce3-114ba904b9fe](https://metadados.snirh.gov.br/geonetwork/srv/por/catalog.search#/metadata/0f57c8a0-6a0f-4283-8ce3-114ba904b9fe)
+
+**How to download:**
+Open metadata page → find download link for **geoft_bho_2017_linha_costa.gpkg** → download GeoPackage file.
+
+
+
+#### 4. Brasília shapefile (KML)
+
+**Source:** IBGE
+**Access page:**
+👉 [https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/27385-localidades.html](https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/27385-localidades.html)
+
+**How to download:**
+Open page → navigate to **Municípios (KML downloads)** → download Brasília / Distrito Federal KML file.
+
+---
+
+#### 5. Mobile Coverage (Cobertura Móvel)
+
+**Source:** dados.gov.br
+**Dataset page:**
+👉 [https://dados.gov.br/dados/conjuntos-dados/cobertura_movel](https://dados.gov.br/dados/conjuntos-dados/cobertura_movel)
+
+**How to download:**
+Open page → download ZIP containing coverage files (must include `Atributos_Setores_Censo_2010.csv` and `Cobertura_2021_11_Setores.csv`).
+
+---
+
+#### 6. DETER Forest Degradation Alerts (Amazon)
+
+**Source:** INPE / Terrabrasilis
+**Download page:**
+👉 [https://terrabrasilis.dpi.inpe.br/downloads/](https://terrabrasilis.dpi.inpe.br/downloads/)
+
+**How to download:**
+Open page → select **DETER-AMZ public shapefile** → download latest ZIP (e.g., `deter-amz-public-YYYYmmdd.zip`).
+
+
+
+#### 7. IBAMA Enforcement (Autos de Infração)
+
+**Source:** dados.gov.br
+**Dataset page:**
+👉 [https://dados.gov.br/dados/conjuntos-dados/fiscalizacao-auto-de-infracao](https://dados.gov.br/dados/conjuntos-dados/fiscalizacao-auto-de-infracao)
+
+**How to download:**
+Open page → download yearly CSV files (2016–2024) → optionally compress into one ZIP (`auto_infracao_csv.zip`).
+
+
+
+#### 8. ICMBio Enforcement (Autos de Infração Shapefiles)
+
+**Source:** ICMBio
+**Access page:**
+👉 [https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais/mapa-tematico-e-dados-geoestatisticos-das-unidades-de-conservacao-federais](https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais/mapa-tematico-e-dados-geoestatisticos-das-unidades-de-conservacao-federais)
+
+**How to download:**
+Open page → locate **Autos de Infração shapefile package** → download ZIP.
+
+
+
+#### 9. Fixed Broadband Access (STARLINK & GEO – Anatel)
+
+**Source:** dados.gov.br
+**Dataset page:**
+👉 [https://dados.gov.br/dados/conjuntos-dados/acessos---banda-larga-fixa](https://dados.gov.br/dados/conjuntos-dados/acessos---banda-larga-fixa)
+
+**How to download:**
+Open page → download yearly files `Acessos_Banda_Larga_Fixa_YYYY.csv` (2015–2024) → optionally compress into `acessos_banda_larga_fixa.zip`.
+
+
+
+#### 10. MapBiomas Land Cover (Annual Coverage TIFFs)
+
+**Source:** MapBiomas
+**Landing page:**
+👉 [https://mapbiomas.org/](https://mapbiomas.org/)
+
+**Direct file example (2024):**
+👉 [https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10/lulc/coverage/brazil_coverage_2024.tif](https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10/lulc/coverage/brazil_coverage_2024.tif)
+
+**How to download:**
+Download `brazil_coverage_YYYY.tif` for years 2016–2024.
+
+
+
+#### 11. CAMS Particulate Matter (PM1, PM2.5, PM10)
+
+**Source:** Copernicus Atmosphere Monitoring Service
+**Portal:**
+👉 [https://cds.climate.copernicus.eu/](https://cds.climate.copernicus.eu/)
+👉 [https://atmosphere.copernicus.eu/](https://atmosphere.copernicus.eu/)
+
+**How to download:**
+Create free CDS account → search for particulate matter reanalysis → request NetCDF files for 2016–2024 (Brazil region) → download `.nc` files.
+
+
+#### 12. CHIRTS-ERA5 Maximum Temperature (Tmax)
+
+**Source:** Climate Hazards Center (UCSB)
+👉 [https://www.chc.ucsb.edu/data/chirts-era5](https://www.chc.ucsb.edu/data/chirts-era5)
+
+**How to download:**
+Open page → navigate to monthly Tmax GeoTIFF files → download `.tif` files for 2016–2024.
+
+
+#### 13. CHIRPS Precipitation (Monthly TIFFs)
+
+**Source:** Climate Hazards Center
+👉 [https://data.chc.ucsb.edu/products/CHIRPS/v3.0/](https://data.chc.ucsb.edu/products/CHIRPS/v3.0/)
+
+**How to download:**
+Navigate to `/monthly/latam/tifs/` → download monthly precipitation `.tif` files for 2016–2024.
+
+
+
+#### 14. SIM Mortality Data (DATASUS)
+
+**Source:** Ministério da Saúde
+👉 [https://dadosabertos.saude.gov.br/dataset/sim](https://dadosabertos.saude.gov.br/dataset/sim)
+
+**How to download:**
+Open page → download “Mortalidade Geral YYYY” CSV files for 2017–2024 → optionally compress into `deaths.zip`.
+
+
+#### 15. FAO-GAEZ Soy Potential Raster (GAEZ v5)
+
+**Source:** FAO GAEZ
+👉 [https://gaez.fao.org/](https://gaez.fao.org/)
+
+**How to download:**
+Open portal → go to **Data / Downloads** → locate **Soy attainable yield (high-tech)** raster (RES05…SOY.HRLM) → download GeoTIFF.
+
+
 
 
 ---
