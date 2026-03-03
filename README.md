@@ -58,7 +58,6 @@ materials.
 
 > All packages are available on CRAN. No GitHub-only or private packages are required.
 
----
 
 #### Step 2 — Download raw data
 
@@ -145,7 +144,7 @@ datasets/
 ├── PM10.nc
 ├── chirts-era5/          ← folder with yearly .tif files
 ├── chirps-v3.0/          ← folder with monthly .tif files
-├── deaths.zip
+├── deaths/               ← folder with yearly .csv and zipped .csv files
 ├── mapbiomas/            ← folder with yearly .tif files
 ├── DATA_GAEZ-V5_MAPSET_RES05-YXX_GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif
 └── processed/            ← created automatically by starlink_dataset.R
@@ -200,10 +199,8 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 **Instructions:**
 
 1. Open the URL above. The page title is *Localidades*.
-2. Scroll down to the **Localidades do Brasil - Municípios (kml)** section and click the link on **kml** for
-   **Localidades_Municipios_kml.zip** (the full national KML package).
-3. Save the `.zip` file to `datasets/`. The script reads the Brasília KML from
-   within the archive without extracting it.
+2. Scroll down to the **Localidades do Brasil - Municípios (kml)** section and click the link on **kml** for download (the full national KML package).
+3. Save the `Localidades_Municipios_kml.zip` file to `datasets/`. The script reads the Brasília KML from within the archive without extracting it.
 
 ---
 
@@ -230,7 +227,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 | Field       | Detail |
 |-------------|--------|
 | **Files**    | `cobertura_movel.zip` |
-| **Source**  | ANATEL — dados.gov.br |
+| **Source**  | ANATEL — National Telecommunications Agency |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/cobertura_movel> |
 
 **Instructions:**
@@ -248,7 +245,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 | Field       | Detail |
 |-------------|--------|
 | **File**    | `areas_cobertas.zip` |
-| **Source**  | ANATEL — dados.gov.br |
+| **Source**  | ANATEL — National Telecommunications Agency |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/cobertura_movel> |
 
 **Instructions:**
@@ -287,7 +284,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 | Field       | Detail |
 |-------------|--------|
 | **File**    | `auto_infracao_csv.zip` |
-| **Source**  | IBAMA — dados.gov.br |
+| **Source**  | IBAMA — Brazilian Institute of Environment and Renewable Natural Resources |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/fiscalizacao-auto-de-infracao> |
 
 **Instructions:**
@@ -324,7 +321,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 | Field       | Detail |
 |-------------|--------|
 | **File**    | `acessos_banda_larga_fixa.zip` |
-| **Source**  | ANATEL — dados.gov.br |
+| **Source**  | ANATEL — Chico Mendes Institute for Biodiversity Conservation |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/acessos---banda-larga-fixa> |
 
 **Instructions:**
@@ -344,27 +341,24 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 | Field       | Detail |
 |-------------|--------|
-| **Files**   | `PM1.nc`, `PM2.5.nc`, `PM10.nc` |
+| **File**    | `data_sfc.nc` |
 | **Source**  | Copernicus Atmosphere Monitoring Service (CAMS) |
-| **URL**     | <https://ads.atmosphere.copernicus.eu/datasets/cams-global-reanalysis-eac4> |
+| **URL**     | <https://ads.atmosphere.copernicus.eu/datasets/cams-global-reanalysis-eac4?tab=download> |
 
 **Instructions:**
 
-1. You will need a free [Copernicus ADS account](https://ads.atmosphere.copernicus.eu/user/register).
-2. After logging in, navigate to the dataset **CAMS global reanalysis (EAC4)**.
-3. Select the variables for each particulate size:
-   - **Particulate matter d < 1 µm** → `pm1`
-   - **Particulate matter d < 2.5 µm** → `pm2p5`
-   - **Particulate matter d < 10 µm** → `pm10`
-4. Set the temporal coverage to **2016–2024**, time resolution **3-hourly**,
-   and spatial domain to Brazil (approximately −5°N to −35°S, −75°W to −30°W).
-5. Download each variable as a separate NetCDF (`.nc`) file and name them
-   `PM1.nc`, `PM2.5.nc`, and `PM10.nc`.
-6. Place all three files in `datasets/`.
-
-> ⚠️ **Warning:** Extraction of these rasters is computationally intensive and
-> can take **several hours**. See the comment in `starlink_dataset.R`
-> (Section 5) for guidance on resuming interrupted runs.
+1. You will need a free [Copernicus account](https://ads.atmosphere.copernicus.eu/user/register).
+2. After logging in, navigate to the dataset URL above to **CAMS global reanalysis (EAC4)** webpage.
+3. In **Variable** > **Single level**, select:
+   - **Particulate matter d < 1 µm (PM1)**
+   - **Particulate matter d < 2.5 µm (PM2.5)**
+   - **Particulate matter d < 10 µm (PM10)**
+5. Set the temporal coverage from **2017-01-01** to **2024-12-31**
+6. Select **all times** from 00:00 to 21::00
+7. In **Geographical area**, select **Sub-region extraction** using: 6°N to −19°S, and −75°W to −43°W
+8. In **Format**, select **Zipped netCDF (experimental)**
+9. Click **Submit Form** and you will be redirected to a page where you can download your request after data processing (may take a hour)
+10. Download the file and unzip it to `datasets/data_sfc.nc`.
 
 ---
 
@@ -374,17 +368,15 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 | Field       | Detail |
 |-------------|--------|
-| **Files**   | Yearly `.tif` files inside `datasets/chirts-era5/` |
+| **Files**   | Yearly `CHIRTS-ERA5.monthly_Tmax.YYYY.MM.tif` |
 | **Source**  | CHC — University of California, Santa Barbara |
-| **URL**     | <https://www.chc.ucsb.edu/data/chirts-era5> |
+| **URL**     | <https://data.chc.ucsb.edu/experimental/CHIRTS-ERA5/tmax/tifs/monthly/> |
 
 **Instructions:**
 
-1. Open the URL and navigate to the **Monthly Tmax** product.
-2. Download the monthly GeoTIFF files for **2016–2024**.
-3. Place all `.tif` files inside `datasets/chirts-era5/`. The expected filename
-   pattern is `CHIRTS-ERA5.daily.global.0.25deg.ltm.1983-2016.Tmax.YYYY.MM.tif`
-   (years encoded at positions 26–29 and months at 31–32 in the script).
+1. Open the URL and You will see a directory listing of monthly GeoTIFF files.
+2. Download the monthly GeoTIFF files for **2017–2024**.
+3. Place all `.tif` files inside `datasets/chirts-era5/`. The expected filename pattern is `CHIRTS-ERA5.monthly_Tmax.YYYY.MM.tif`
 
 ---
 
@@ -392,15 +384,14 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 | Field       | Detail |
 |-------------|--------|
-| **Files**   | Monthly `.tif` files inside `datasets/chirps-v3.0/` |
+| **Files**   | Monthly `chirps-v3.0.YYYY.MM.tif` files |
 | **Source**  | CHC — University of California, Santa Barbara |
 | **URL**     | <https://data.chc.ucsb.edu/products/CHIRPS/v3.0/monthly/latam/tifs/> |
 
 **Instructions:**
 
 1. Open the URL. You will see a directory listing of monthly GeoTIFF files.
-2. Download all files corresponding to **2016–2024**. File names follow the
-   pattern `chirps-v3.0.YYYY.MM.tif`.
+2. Download all files corresponding to **2017–2024**. File names follow the pattern `chirps-v3.0.YYYY.MM.tif`.
 3. Save all `.tif` files inside `datasets/chirps-v3.0/`.
 
 ---
@@ -411,23 +402,20 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 | Field       | Detail |
 |-------------|--------|
-| **File**    | `deaths.zip` (user-assembled) |
+| **Files**    | `Mortalidade_Geral_YYYY_csv.zip`, `DOYYOPEN_csv.zip`, and `DO24OPEN.csv` |
 | **Source**  | Ministério da Saúde — DATASUS |
-| **URL**     | <https://dadosabertos.saude.gov.br/dataset/sim> |
+| **URL**     | <https://dados.gov.br/dados/conjuntos-dados/sim-1979-2019> |
 
 **Instructions:**
 
 1. Open the URL. The page title is *SIM — Declarações de Óbito*.
-2. Under **Recursos**, find and download the files labelled
-   **Mortalidade Geral YYYY** for each year from **2017 to 2024**. These are
-   large CSV files (`.csv`).
-3. Each file will be named `Mortalidade_Geral_YYYY.csv`.
-4. Compress all eight files into a single ZIP named `deaths.zip` and save it to
-   `datasets/`.
+2. Under **Recursos**, find and download the CSV files labelled **Mortalidade Geral YYYY** for each year from **2017 to 2024**. Some.
+3. Some of these files are zipped and other are unzipped CSV files with the following patterns `Mortalidade_Geral_YYYY` or `DOYYOPEN`.
+4. Save all files into `datasets/deaths` with their original names and formats:
+  - 2017-2021: `Mortalidade_Geral_YYYY_csv.zip`
+  - 2022-2023: `DO22OPEN.csv` and `DO23OPEN.csv`
+  - 2024: `DO24OPEN_csv.zip`
 
-> **Note:** The portal may require you to click through a terms-of-use screen
-> (*"Aceitar os termos"* — accept the terms) before downloading. Click
-> **Aceitar** (Accept) to proceed.
 
 ---
 
@@ -437,15 +425,13 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 | Field       | Detail |
 |-------------|--------|
-| **Files**   | Yearly `.tif` files inside `datasets/mapbiomas/` |
-| **Source**  | MapBiomas Brasil — Google Earth Engine / GCS |
-| **URL**     | Direct GCS links (see below) |
+| **Files**   | Yearly `brazil_coverage_YYYY.tif` files |
+| **Source**  | MapBiomas   |
+| **URL**     | Direct link below |
 
 **Instructions:**
 
-Download the annual land-cover GeoTIFF for each year from 2016 to 2024 using
-the following URL pattern (replace `YYYY` with the desired year):
-
+1. Download the annual land-cover GeoTIFF for each year from 2016 to 2024 using the following URL pattern (replace `YYYY` with the desired year):
 ```
 https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10/lulc/coverage/brazil_coverage_YYYY.tif
 ```
@@ -456,9 +442,7 @@ For example, for 2022:
 https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10/lulc/coverage/brazil_coverage_2022.tif
 ```
 
-Save all nine files inside `datasets/mapbiomas/`. File names must start with
-`brazil_coverage` and end with `.tif` for the script's `list.files()` call to
-detect them.
+2. Save all nine files inside `datasets/mapbiomas/`.
 
 ---
 
@@ -470,21 +454,12 @@ detect them.
 |-------------|--------|
 | **File**    | `DATA_GAEZ-V5_MAPSET_RES05-YXX_GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif` |
 | **Source**  | FAO — Global Agro-Ecological Zones v5 |
-| **URL**     | <https://gaez.fao.org/pages/data-viewer> |
+| **URL**     | <https://storage.googleapis.com/fao-gismgr-gaez-v5-data/DATA/GAEZ-V5/MAPSET/RES05-YXX/GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif> |
 
 **Instructions:**
 
-1. Open the URL. Click **Launch Data Viewer**.
-2. In the left panel, navigate to:
-   - **Theme:** Agro-climatic Resources → Yield Gap and Attainable Yield
-   - **Sub-theme:** Attainable Yield
-   - **Crop:** Soybean
-   - **Water supply:** Rain-fed
-   - **Input level:** High
-   - **Historical period:** 2001–2020 (AGERA5)
-3. Click **Download** and select the **0.05° resolution** GeoTIFF.
-4. The downloaded filename should match the one listed above. Save it to
-   `datasets/`.
+1. Download the file using the URL.
+2. Save `GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif` to `datasets/`.
 
 ---
 
