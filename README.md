@@ -3,79 +3,284 @@
 
 ---
 
-### Content
+## Table of Contents
 
-> **Important:** Download all files below and place them in the repository `datasets/` folder. Keep original filenames whenever possible, as the script expects specific names.
-
----
-
-### `starlink_dataframe.R` — build analytical dataset
-
-Builds the municipality-year analytical dataset and all intermediate processed data (DETER, enforcement, Starlink/GEO subscriptions, PM, climate, mortality, MapBiomas transitions, soy potential) and saves `datasets/processed/analysis_dataset.dta`.
-
-**What it does:**
-
-* Loads raw spatial and tabular inputs (IBGE/INPE/ANATEL/MapBiomas/CAMS/CHIRPS/SIM/GAEZ).
-* Constructs a 772-municipality panel (2017–2024), computes centroids, distances, and population density.
-* Extracts and aggregates: forest-degradation alerts (DETER), environmental enforcement records (IBAMA/ICMBio) with text categorization, Starlink & GEO satellite accesses, particulate matter (CAMS) aggregated to municipal-year, Tmax and precipitation (CHIRPS/CHIRTS), ICD-10 mortality rates, MapBiomas land-cover transitions and forest share, and FAO-GAEZ soy potential.
-* Joins all processed pieces into a single analysis dataset and writes a Stata `.dta` file.
-
-**Inputs:**
-
-* `datasets/` folder with raw downloads and shapefiles referenced in the script (further instruction provided in the code).
-* Zipped CSV/SHP/NETCDF/TIF original datasets, downloaded from the sources.
-
-**Outputs:**
-
-* Multiple RDS files under `datasets/processed/` (e.g., `munic.RDS`, `deter.RDS`, `police.RDS`, `starlink.RDS`, `geosat.RDS`, `pm_cams.RDS`, `tmax.RDS`, `prcp.RDS`, `deaths.RDS`, `mbtrans.RDS`, `mb_forest.RDS`, `soy_potential.RDS`) and the final `datasets/processed/analysis_dataset.dta`.
-
-**Dependencies:**
-
-* R (4.4.3), packages: `tidyverse`, `sf`, `terra`, `exactextractr`, `tiff`, `readxl`, `stringi`, `haven`, `data.table` (install if missing).
-
-**Notes:**
-
-* **Set working directory** to the repository root (script uses `setwd()`—update or remove to match your local layout).
-* **CRS:** uses an Albers SIRGAS2000 projection for area computations; maintained across extractions.
-* **Heavy steps:** CAMS PM extraction and MapBiomas transition calculations are computationally intensive — the script warns these can take hours and saves intermediate yearly/state RDS files so work can be resumed.
-* **Text categorization:** ICMBio/IBAMA descriptions are normalized and matched via regex lists.
-* **Reproducibility:** script writes intermediate RDS files so downstream steps can be rerun without repeating costly raster extractions.
-
+1. [Overview](#1-overview)
+2. [Repository Structure](#2-repository-structure)
+3. [R Packages](#3-r-packages)
+4. [File 1 — `starlink_dataframe.R`](#4-file-1--starlink_dataframer)
+5. [File 2 — `starlink_results.Rmd`](#5-file-2--starlink_resultsrmd)
+6. [How to Run](#6-how-to-run)
 
 ---
 
-### `starlink_results.Rmd` — run analyses and generate figures/tables (R Markdown)
+## 1. Overview
 
-Reproduces all estimation results, figures, and supplementary tables for the paper and renders an HTML report with tables, maps, event-study/placebo checks, heterogeneity plots, and first-stage diagnostics.
+This repository contains two code files that together reproduce all results of
+the paper. The workflow is strictly sequential:
 
-**What it does:**
+```
+starlink_dataframe.R   →   analytical_dataset.dta   →   starlink_results.Rmd
+     (data build)               (intermediary)              (results)
+```
 
-* Loads the pre-built analytical dataset (`datasets/processed/analysis_dataset.dta`) and required processed RDS pieces.
-* Constructs model-ready variables (normalizations, year × coverarea instruments, shares, etc.).
-* Runs two-stage fixed-effects IV regressions (shift-share instruments) across a suite of outcome variables, clusters SEs by municipality, and stores results for plotting and tables.
-* Produces all manuscript figures (maps, coefficient plots with 90/95% CIs, event-study/placebo plots, heterogeneity splits) and supplementary tables (descriptives and first-stage stats).
-* Renders a self-contained HTML report.
+`starlink_dataframe.R` ingests all raw datasets, processes them, and exports a
+single Stata-format panel dataset (`datasets/processed/analytical_dataset.dta`).
+`starlink_results.Rmd` reads that dataset and produces all regression tables,
+event-study plots, and figures included in the paper and supplementary
+materials.
 
-**Inputs:**
+> **Before running either file**, make sure all raw datasets have been
+> downloaded and placed in the correct subfolders. See
+> [README_data.md](README_data.md) for full instructions.
 
-* `datasets/processed/analysis_dataset.dta` (final analytical dataset written by `starlink_dataframe.R`)
-* Processed RDS files referenced in the script for maps and panels (e.g., `datasets/processed/starlink.RDS`, `deter` shapefile path inside `/vsizip/...`), plus raw spatial files listed in the header (municipalities shapefile, DETER shapefile, coverage KMLs, etc.).
+---
 
-**Outputs:**
+## 2. Repository Structure
 
-* HTML report created by knitting the R Markdown (includes Figures 1–6, Supplementary Fig/Table outputs).
-* Intermediate R objects created during execution (kept in-memory while knitting); the script writes no new processed datasets — it reads the `datasets/processed` outputs created by the data-building script.
+```
+.
+├── starlink_dataframe.R       # Step 1 — builds the analytical dataset
+├── starlink_results.Rmd       # Step 2 — produces all results
+├── README.md                  # This file
+├── README_data.md             # Data sources and download instructions
+└── datasets/
+    ├── [raw files]            # Downloaded by the user (see README_data.md)
+    └── processed/             # Created automatically by starlink_dataframe.R
+        └── analytical_dataset.dta
+```
 
-**Dependencies:**
+---
 
-* `fixest`, `tidyverse` (dplyr, ggplot2, tibble, etc.), `ggpubr`, `sf`, `haven`, `fastDummies`, `broom`, `ggnewscale`, `terra`/`exactextractr` (for mapping sections). Ensure packages are installed.
+## 3. R Packages
 
-**Notes:**
+### 3.1 Installation
 
-* **Working directory:** The Rmd sets `setwd()` — update or remove this for your environment. Knit from the repository root for the easiest path resolution.
-* **Data requirement:** This script expects the analytical dataset and several processed RDS/raw spatial files already present. Run `starlink_dataframe.R` first to produce them (or place matching files in `datasets/processed/`).
-* **Maps:** Map panels read shapefiles and KMLs directly (via `/vsizip/...` paths and the `datasets/areas_cobertas.zip`). Confirm that those archives are present; otherwise, the map section will error.
+Run the block below once to install all required packages:
 
+```r
+install.packages(c(
+  # Data wrangling
+  "tidyverse",
+  "data.table",
+  "readxl",
+  "stringi",
+  "haven",
+  "fastDummies",
+  # Spatial
+  "sf",
+  "terra",
+  "exactextractr",
+  "tiff",
+  # Econometrics
+  "fixest",
+  "broom",
+  # Visualization
+  "ggplot2",   # included in tidyverse, listed explicitly for clarity
+  "ggpubr",
+  "ggnewscale"
+))
+```
+
+### 3.2 Package Reference Table
+
+| Package | Version tested | Role | Used in |
+|---------|---------------|------|---------|
+| `tidyverse` | ≥ 2.0 | Data manipulation and visualization (`dplyr`, `ggplot2`, `tidyr`, `purrr`, `readr`, `stringr`, `forcats`, `lubridate`) | Both files |
+| `data.table` | ≥ 1.15 | Fast row-binding of large spatial extractions (`rbindlist`) | `starlink_dataframe.R` |
+| `readxl` | ≥ 1.4 | Reading `.xlsx` files | `starlink_dataframe.R` |
+| `stringi` | ≥ 1.8 | String normalization (accented characters in Portuguese keywords) | `starlink_dataframe.R` |
+| `haven` | ≥ 2.5 | Reading/writing Stata `.dta` files | Both files |
+| `fastDummies` | ≥ 1.7 | Creating year dummy columns for the event-study | `starlink_results.Rmd` |
+| `sf` | ≥ 1.0 | Reading and processing vector spatial data (shapefiles, KML, GPKG) | Both files |
+| `terra` | ≥ 1.7 | Reading and processing raster data (GeoTIFF, NetCDF) | `starlink_dataframe.R` |
+| `exactextractr` | ≥ 0.10 | Area-weighted extraction of raster values to polygons | `starlink_dataframe.R` |
+| `tiff` | ≥ 0.1 | Low-level TIFF support required by `terra` on some systems | `starlink_dataframe.R` |
+| `fixest` | ≥ 0.12 | Two-way fixed-effects IV regression (`feols`) and fit statistics | `starlink_results.Rmd` |
+| `broom` | ≥ 1.0 | Tidying regression output into data frames | `starlink_results.Rmd` |
+| `ggpubr` | ≥ 0.6 | Combining multiple `ggplot2` panels (`ggarrange`, `annotate_figure`) | `starlink_results.Rmd` |
+| `ggnewscale` | ≥ 0.4 | Multiple color/fill scales in the same `ggplot2` figure | `starlink_results.Rmd` |
+
+> All packages are available on CRAN. No GitHub-only or private packages are
+> required.
+
+---
+
+## 4. File 1 — `starlink_dataframe.R`
+
+### Purpose
+
+Reads all raw datasets, performs spatial and tabular processing, and joins
+everything into a single municipality × year panel saved as
+`datasets/processed/analytical_dataset.dta`.
+
+### Structure
+
+The script is organized into numbered sections using the `{ # N. SECTION ####`
+convention, making it easy to fold/unfold blocks in RStudio:
+
+| Section | Name | Description |
+|---------|------|-------------|
+| 0 | Initialization | Loads packages, sets the working directory and the official Brazilian CRS (SIRGAS 2000 / Albers conical equal-area) |
+| 1 | Building Municipal Panel | Reads the Legal Amazon municipalities shapefile; appends 2022 Census population, 2021 mobile coverage, distances to the coast and Brasília, and centroids |
+| 2 | Forest Degradation | Reads DETER alerts (INPE), intersects with municipalities, computes flagged area and count by degradation type (fire, selective cutting, other) per municipality × month |
+| 3 | Environmental Enforcement | Reads IBAMA and ICMBio infraction notices; classifies them by type (deforestation, fire, flora, fauna, pollution, administrative); aggregates to municipality × year |
+| 4 | Satellite Broadband | Reads ANATEL fixed-broadband subscription records; isolates Starlink (LEO) and other VSAT/GEO providers; normalizes by population |
+| 5 | Air Pollution | Extracts area-weighted monthly PM₁, PM₂.₅ and PM₁₀ concentrations from CAMS EAC4 NetCDF reanalysis files; converts units from kg/m³ to µg/m³ |
+| 6 | Climate Controls | Extracts area-weighted monthly maximum temperature (CHIRTS-ERA5) and precipitation (CHIRPS v3.0) from GeoTIFF rasters |
+| 7 | Mortality Rates | Reads SIM death records; classifies deaths by ICD-10 chapter; computes rates per 100,000 inhabitants including homicide sub-categories |
+| 8 | Forest Cover and Transitions | Reads MapBiomas annual land-cover rasters; computes forest cover share and year-to-year transition matrices (forest → other land uses) by municipality |
+| 9 | Potential Soy Yield | Extracts area-weighted attainable soybean yield (FAO-GAEZ v5, high-input scenario) as a heterogeneity instrument |
+| 10 | Joining Datasets | Left-joins all processed `.RDS` files on `codmun × year` and writes the final `analytical_dataset.dta` |
+
+### Key design choices
+
+- **CRS:** All spatial operations use SIRGAS 2000 Albers conical equal-area
+  (the standard for area computations in Brazil, as defined by IBGE). The
+  projection string is defined once at initialization and passed to all
+  `st_transform()` calls.
+- **ZIP reading:** Raw files are read directly from `.zip` archives using
+  `/vsizip/` (GDAL virtual filesystem) and `unz()`, so nothing needs to be
+  manually extracted.
+- **Resumable PM extraction:** Because processing CAMS NetCDF files can take
+  several hours, Section 5 automatically detects the latest completed year/month
+  in `datasets/processed/` and resumes from there.
+- **Intermediary outputs:** Each section saves its result as an `.RDS` file in
+  `datasets/processed/`. This allows individual sections to be re-run
+  independently without re-processing the entire pipeline.
+
+### Outputs
+
+| File | Description |
+|------|-------------|
+| `datasets/processed/munic.RDS` | Municipal panel (geography + covariates) |
+| `datasets/processed/deter.RDS` | DETER degradation alerts |
+| `datasets/processed/police.RDS` | Environmental enforcement fines |
+| `datasets/processed/starlink.RDS` | Starlink subscriptions per 1,000 inhabitants |
+| `datasets/processed/geosat.RDS` | Other GEO satellite subscriptions per 1,000 inhabitants |
+| `datasets/processed/pm_cams.RDS` | PM₁, PM₂.₅, PM₁₀ concentrations |
+| `datasets/processed/tmax.RDS` | Mean annual maximum temperature |
+| `datasets/processed/prcp.RDS` | Mean annual precipitation |
+| `datasets/processed/deaths.RDS` | Mortality rates by ICD-10 chapter |
+| `datasets/processed/mb_forest.RDS` | Forest cover share (MapBiomas) |
+| `datasets/processed/mbtrans.RDS` | Forest cover transitions (MapBiomas) |
+| `datasets/processed/soy_potential.RDS` | Attainable soybean yield (FAO-GAEZ) |
+| `datasets/processed/analytical_dataset.dta` | **Final analytical dataset** |
+
+---
+
+## 5. File 2 — `starlink_results.Rmd`
+
+### Purpose
+
+Reads `analytical_dataset.dta` and reproduces all regression tables, event-study
+plots, heterogeneity analyses, and figures presented in the paper.
+
+### Structure
+
+| Chunk | Name | Description |
+|-------|------|-------------|
+| `Initialization` | Setup | Loads packages, sets locale to handle Portuguese characters, defines helper functions |
+| `DataNormalization` | Data prep | Reads the `.dta` file; normalizes outcome variables by municipal area; creates year dummy columns for the event-study specification; applies unit rescaling |
+| `VariableNames` | Variable labels | Defines a lookup table mapping internal variable names to display labels and classifying them as outcomes (`out`) or covariates (`cov`) |
+| `Covariates` | Model specs | Defines the list of covariate sets used across model specifications (Model I: no controls; Model II: full controls) |
+| `ResultsTable` | Table scaffold | Initializes the formatted results matrix |
+| `Estimations` | Main IV results | Estimates the 2SLS model with `feols()` for all outcome variables and both covariate sets; stores first-stage diagnostics; collects coefficients and confidence intervals for figures |
+| `PlaceboTest` | Event study | Estimates placebo/event-study regressions using the interaction of mobile coverage × year dummies as instruments; plots pre-trend tests |
+| `FigHeterogeneity` | Heterogeneity | Splits the sample by soybean yield potential (above/below median) and re-estimates the main model separately for each half |
+| `FigMaps` | Maps | Builds Figure 1: maps of Starlink subscription rates, mobile coverage polygons, and DETER degradation alerts for 2022 and 2024 |
+| `FigDegradation` | Fig. 3 | Coefficient plots for forest degradation outcomes |
+| `FigFines` | Fig. 4 | Coefficient plots for environmental enforcement outcomes |
+| `FigForestConv` | Fig. 5 | Coefficient plots for forest cover transition outcomes |
+| `FigPollutionDeath` | Fig. 6 | Coefficient plots for PM pollution and mortality outcomes |
+| Supplementary | Tables & Figs S1–S2 | Descriptive statistics table, first-stage results, and heterogeneity figure |
+
+### Identification strategy
+
+The paper uses a **two-way fixed-effects instrumental variables** design:
+
+- **Endogenous variable:** Starlink subscriptions per 1,000 inhabitants
+  (`starlink`)
+- **Instrument:** Interaction of municipality-level 2021 mobile network coverage
+  (`coverarea`) × year dummies (`coverarea:year`)
+- **Fixed effects:** Municipality (`codmun`) + state × year
+  (`interaction(uf, year)`)
+- **Standard errors:** Clustered at the municipality level
+
+The `feols()` formula syntax used is:
+
+```r
+outcome ~ covariates | codmun + interaction(uf, year) | starlink ~ coverarea:year
+```
+
+### Outputs
+
+All figures and tables are rendered inline in the knitted HTML document. The
+main outputs are:
+
+| Output | Description |
+|--------|-------------|
+| Fig. 1 | Maps of Starlink adoption and forest degradation (2022 vs. 2024) |
+| Fig. 2 | Event-study / placebo tests for forest degradation |
+| Fig. 3 | IV estimates — forest degradation |
+| Fig. 4 | IV estimates — environmental enforcement fines |
+| Fig. 5 | IV estimates — forest cover transitions |
+| Fig. 6 | IV estimates — air pollution and mortality |
+| Table S1 | Descriptive statistics (2017–2021 vs. 2022–2024) |
+| Table S2 | First-stage regression results and diagnostics |
+| Fig. S1 | Heterogeneity by soybean yield potential |
+
+---
+
+## 6. How to Run
+
+### Step 1 — Install packages
+
+```r
+install.packages(c(
+  "tidyverse", "data.table", "readxl", "stringi", "haven", "fastDummies",
+  "sf", "terra", "exactextractr", "tiff",
+  "fixest", "broom",
+  "ggpubr", "ggnewscale"
+))
+```
+
+### Step 2 — Download raw data
+
+Follow the instructions in [README_data.md](README_data.md) and place all files
+in the `datasets/` directory as described there.
+
+### Step 3 — Set the working directory
+
+At the top of `starlink_dataframe.R`, update the `setwd()` call to point to the
+root of this repository on your machine:
+
+```r
+setwd("/path/to/this/repository")
+```
+
+Do the same in the `Initialization` chunk of `starlink_results.Rmd`.
+
+### Step 4 — Build the dataset
+
+Open `starlink_dataframe.R` in RStudio and run it in full (Ctrl+Shift+Enter or
+`source("starlink_dataframe.R")`).
+
+> ⚠️ **Runtime warning:** Section 5 (air pollution) can take **several hours**
+> depending on available RAM and CPU. The script is designed to be resumable —
+> if interrupted, simply re-run and it will continue from the last completed
+> month.
+
+### Step 5 — Produce results
+
+Open `starlink_results.Rmd` and knit it to HTML:
+
+```r
+rmarkdown::render("starlink_results.Rmd")
+```
+
+Or click **Knit** in RStudio. All figures and tables will be embedded in the
+output HTML file.
 
 ---
 ### Downloading the required datasets
