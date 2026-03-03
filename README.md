@@ -7,7 +7,7 @@
 
 1. [Overview](#1-overview)
 2. [Downloading Datasets](#2-downloading-datasets)
-3. [`starlink_dataset.R`](#3-starlink_dataset)
+3. [`starlink_dataset.R`](#3-starlink_datasetr)
 4. [`starlink_results.Rmd`](#4-starlink_resultsrmd)
 
 
@@ -39,14 +39,26 @@ materials.
 
 #### Step 1 — Install packages
 
-```r
-install.packages(c(
-  "tidyverse", "data.table", "readxl", "stringi", "haven", "fastDummies",
-  "sf", "terra", "exactextractr", "tiff",
-  "fixest", "broom",
-  "ggpubr", "ggnewscale"
-))
-```
+| Package | Version tested | Role | Used in |
+|---------|---------------|------|---------|
+| `tidyverse` | ≥ 2.0 | Data manipulation and visualization (`dplyr`, `ggplot2`, `tidyr`, `purrr`, `readr`, `stringr`, `forcats`, `lubridate`) | Both files |
+| `data.table` | ≥ 1.15 | Fast row-binding of large spatial extractions (`rbindlist`) | `starlink_dataset.R` |
+| `readxl` | ≥ 1.4 | Reading `.xlsx` files | `starlink_dataset.R` |
+| `stringi` | ≥ 1.8 | String processing | `starlink_dataset.R` |
+| `haven` | ≥ 2.5 | Reading/writing Stata `.dta` files | Both files |
+| `fastDummies` | ≥ 1.7 | Creating year dummy columns for the event-study | `starlink_results.Rmd` |
+| `sf` | ≥ 1.0 | Reading and processing vector spatial data (shapefiles, KML, GPKG) | Both files |
+| `terra` | ≥ 1.7 | Reading and processing raster data (GeoTIFF, NetCDF) | `starlink_dataset.R` |
+| `exactextractr` | ≥ 0.10 | Area-weighted extraction of raster values to polygons | `starlink_dataset.R` |
+| `tiff` | ≥ 0.1 | Low-level TIFF support required by `terra` on some systems | `starlink_dataset.R` |
+| `fixest` | ≥ 0.12 | Two-way fixed-effects IV regression (`feols`) and fit statistics | `starlink_results.Rmd` |
+| `broom` | ≥ 1.0 | Tidying regression output into data frames | `starlink_results.Rmd` |
+| `ggpubr` | ≥ 0.6 | Combining multiple `ggplot2` panels (`ggarrange`, `annotate_figure`) | `starlink_results.Rmd` |
+| `ggnewscale` | ≥ 0.4 | Multiple color/fill scales in the same `ggplot2` figure | `starlink_results.Rmd` |
+
+> All packages are available on CRAN. No GitHub-only or private packages are required.
+
+---
 
 #### Step 2 — Download raw data
 
@@ -474,65 +486,9 @@ detect them.
 4. The downloaded filename should match the one listed above. Save it to
    `datasets/`.
 
-
-
 ---
 
-## 3. R Packages
-
-### 3.1 Installation
-
-Run the block below once to install all required packages:
-
-```r
-install.packages(c(
-  # Data wrangling
-  "tidyverse",
-  "data.table",
-  "readxl",
-  "stringi",
-  "haven",
-  "fastDummies",
-  # Spatial
-  "sf",
-  "terra",
-  "exactextractr",
-  "tiff",
-  # Econometrics
-  "fixest",
-  "broom",
-  # Visualization
-  "ggplot2",   # included in tidyverse, listed explicitly for clarity
-  "ggpubr",
-  "ggnewscale"
-))
-```
-
-### 3.2 Package Reference Table
-
-| Package | Version tested | Role | Used in |
-|---------|---------------|------|---------|
-| `tidyverse` | ≥ 2.0 | Data manipulation and visualization (`dplyr`, `ggplot2`, `tidyr`, `purrr`, `readr`, `stringr`, `forcats`, `lubridate`) | Both files |
-| `data.table` | ≥ 1.15 | Fast row-binding of large spatial extractions (`rbindlist`) | `starlink_dataset.R` |
-| `readxl` | ≥ 1.4 | Reading `.xlsx` files | `starlink_dataset.R` |
-| `stringi` | ≥ 1.8 | String normalization (accented characters in Portuguese keywords) | `starlink_dataset.R` |
-| `haven` | ≥ 2.5 | Reading/writing Stata `.dta` files | Both files |
-| `fastDummies` | ≥ 1.7 | Creating year dummy columns for the event-study | `starlink_results.Rmd` |
-| `sf` | ≥ 1.0 | Reading and processing vector spatial data (shapefiles, KML, GPKG) | Both files |
-| `terra` | ≥ 1.7 | Reading and processing raster data (GeoTIFF, NetCDF) | `starlink_dataset.R` |
-| `exactextractr` | ≥ 0.10 | Area-weighted extraction of raster values to polygons | `starlink_dataset.R` |
-| `tiff` | ≥ 0.1 | Low-level TIFF support required by `terra` on some systems | `starlink_dataset.R` |
-| `fixest` | ≥ 0.12 | Two-way fixed-effects IV regression (`feols`) and fit statistics | `starlink_results.Rmd` |
-| `broom` | ≥ 1.0 | Tidying regression output into data frames | `starlink_results.Rmd` |
-| `ggpubr` | ≥ 0.6 | Combining multiple `ggplot2` panels (`ggarrange`, `annotate_figure`) | `starlink_results.Rmd` |
-| `ggnewscale` | ≥ 0.4 | Multiple color/fill scales in the same `ggplot2` figure | `starlink_results.Rmd` |
-
-> All packages are available on CRAN. No GitHub-only or private packages are
-> required.
-
----
-
-## 4. `starlink_dataset.R`
+## 3. `starlink_dataset.R`
 
 ### Purpose
 
@@ -595,7 +551,7 @@ convention, making it easy to fold/unfold blocks in RStudio:
 
 ---
 
-## 5. `starlink_results.Rmd`
+## 4. `starlink_results.Rmd`
 
 ### Purpose
 
