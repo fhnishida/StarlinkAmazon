@@ -139,9 +139,7 @@ datasets/
 ├── auto_infracao_csv.zip
 ├── autos_infracao_icmbio_shp.zip
 ├── acessos_banda_larga_fixa.zip
-├── PM1.nc
-├── PM2.5.nc
-├── PM10.nc
+├── data_sfc.nc
 ├── chirts-era5/          ← folder with yearly .tif files
 ├── chirps-v3.0/          ← folder with monthly .tif files
 ├── deaths/               ← folder with yearly .csv and zipped .csv files
@@ -586,5 +584,3 @@ main outputs are:
 | Table S1 | Descriptive statistics (2017–2021 vs. 2022–2024) |
 | Table S2 | First-stage regression results and diagnostics |
 | Fig. S1 | Heterogeneity by soybean yield potential |
-
-
