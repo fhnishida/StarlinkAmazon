@@ -116,7 +116,7 @@ output HTML file.
 
 
 ---
-## 3. Downloading Datasets
+## 2. Downloading Datasets
 
 This document describes all datasets required to run `starlink_dataset.R` and `starlink_results.Rmd`. The datasets are **not** included in this repository due to size and licensing constraints. Follow the instructions below to download each file and place it in the correct subfolder within `datasets/`.
 
