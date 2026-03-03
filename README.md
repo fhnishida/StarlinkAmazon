@@ -8,7 +8,7 @@
 1. [Overview](#1-overview)
 2. [Repository Structure](#2-repository-structure)
 3. [R Packages](#3-r-packages)
-4. [`starlink_dataframe.R`](#4-starlink_dataframer)
+4. [`starlink_dataframe.R`](#4-starlink_dataframe)
 5. [`starlink_results.Rmd`](#5-starlink_resultsrmd)
 6. [How to Run](#6-how-to-run)
 7. [Downloading Datasets](#7-downloading-datasets)
@@ -107,7 +107,7 @@ install.packages(c(
 
 ---
 
-## 4. File 1 — `starlink_dataframe.R`
+## 4. `starlink_dataframe.R`
 
 ### Purpose
 
