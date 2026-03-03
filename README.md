@@ -8,9 +8,10 @@
 1. [Overview](#1-overview)
 2. [Repository Structure](#2-repository-structure)
 3. [R Packages](#3-r-packages)
-4. [File 1 — `starlink_dataframe.R`](#4-file-1--starlink_dataframer)
-5. [File 2 — `starlink_results.Rmd`](#5-file-2--starlink_resultsrmd)
+4. [`starlink_dataframe.R`](#4-file-1--starlink_dataframer)
+5. [`starlink_results.Rmd`](#5-file-2--starlink_resultsrmd)
 6. [How to Run](#6-how-to-run)
+7. [Downloading Datasets]()
 
 ---
 
@@ -169,7 +170,7 @@ convention, making it easy to fold/unfold blocks in RStudio:
 
 ---
 
-## 5. File 2 — `starlink_results.Rmd`
+## 5. `starlink_results.Rmd`
 
 ### Purpose
 
@@ -283,34 +284,11 @@ Or click **Knit** in RStudio. All figures and tables will be embedded in the
 output HTML file.
 
 ---
-### Downloading the required datasets
+## 7. Downloading Datasets
 
 This document describes all datasets required to run `starlink_dataframe.R` and `starlink_results.Rmd`. The datasets are **not** included in this repository due to size and licensing constraints. Follow the instructions below to download each file and place it in the correct subfolder within `datasets/`.
 
 > **Note for non-Portuguese speakers:** Several datasets are hosted on Brazilian government portals whose interfaces are entirely in Portuguese. Step-by-step instructions in English are provided for each of those cases.
-
----
-
-#### Summary Table
-
-| # | Dataset | Variable(s) | Source | Period |
-|---|---------|-------------|--------|--------|
-| 1a | Legal Amazon municipalities | spatial base | INPE/TerraBrasilis | — |
-| 1b | Municipal population | `pop` | IBGE Census 2022 | 2022 |
-| 1c | Brasília KML | distance instrument | IBGE | — |
-| 1d | SA coastline | distance instrument | ANA | — |
-| 2a | Mobile coverage (sectors) | `coverarea` | ANATEL | 2021 |
-| 2b | Mobile coverage (polygons) | maps | ANATEL | 2021 |
-| 3 | DETER alerts | `area_mun_deter_*`, `n_mun_deter_*` | INPE | 2016–2024 |
-| 4a | IBAMA infractions | `n_mun_ibama_*` | IBAMA | 2016–2024 |
-| 4b | ICMBio infractions | `n_mun_icmbio_*` | ICMBio | 2016–2024 |
-| 5 | Broadband subscriptions | `starlink`, `geosat` | ANATEL | 2015–2024 |
-| 6 | CAMS PM reanalysis | `pm1mun`, `pm25mun`, `pm10mun` | Copernicus | 2016–2024 |
-| 7a | CHIRTS-ERA5 Tmax | `tmax` | CHC/UCSB | 2016–2024 |
-| 7b | CHIRPS v3.0 precipitation | `prcp` | CHC/UCSB | 2016–2024 |
-| 8 | SIM mortality records | `mort_*`, `hom`, `hom_fa` | DATASUS | 2017–2024 |
-| 9 | MapBiomas land cover | `p_forest`, forest transitions | MapBiomas | 2016–2024 |
-| 10 | FAO-GAEZ soy yield | `soyield_ful_mun_high` | FAO | 2001–2020 |
 
 ---
 
@@ -343,9 +321,9 @@ datasets/
 
 ---
 
-#### 1. Geographic Base
+### 1. Geographic Base
 
-##### 1.1 Legal Amazon Municipalities Shapefile
+#### 1.1 Legal Amazon Municipalities Shapefile
 
 | Field       | Detail |
 |-------------|--------|
@@ -358,7 +336,7 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-##### 1.2 Brazilian Municipalities — Population (2022 Census)
+#### 1.2 Brazilian Municipalities — Population (2022 Census)
 
 | Field       | Detail |
 |-------------|--------|
@@ -379,7 +357,7 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-##### 1.3 Brazilian Localities — Brasília KML
+#### 1.3 Brazilian Localities — Brasília KML
 
 | Field       | Detail |
 |-------------|--------|
@@ -397,7 +375,7 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-##### 1.4 South America Coastline
+#### 1.4 South America Coastline
 
 | Field       | Detail |
 |-------------|--------|
@@ -413,9 +391,9 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-#### 2. Mobile Network Coverage
+### 2. Mobile Network Coverage
 
-##### 2.1 Coverage by Census Sector (tabular)
+#### 2.1 Coverage by Census Sector (tabular)
 
 | Field       | Detail |
 |-------------|--------|
@@ -435,7 +413,7 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-##### 2.2 Coverage Polygons by Municipality (KML)
+#### 2.2 Coverage Polygons by Municipality (KML)
 
 | Field       | Detail |
 |-------------|--------|
@@ -456,9 +434,9 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-#### 3. Forest Degradation
+### 3. Forest Degradation
 
-##### 3.1 DETER Degradation Alerts (INPE)
+#### 3.1 DETER Degradation Alerts (INPE)
 
 | Field       | Detail |
 |-------------|--------|
@@ -477,9 +455,9 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-#### 4. Environmental Enforcement
+### 4. Environmental Enforcement
 
-##### 4.1 IBAMA — Infraction Notices (*Autos de Infração*)
+#### 4.1 IBAMA — Infraction Notices (*Autos de Infração*)
 
 | Field       | Detail |
 |-------------|--------|
@@ -498,7 +476,7 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-##### 4.2 ICMBio — Infraction Notices (Shapefile)
+#### 4.2 ICMBio — Infraction Notices (Shapefile)
 
 | Field       | Detail |
 |-------------|--------|
@@ -517,9 +495,9 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-#### 5. Satellite Broadband Access
+### 5. Satellite Broadband Access
 
-##### 5.1 Fixed Broadband Subscriptions — ANATEL
+#### 5.1 Fixed Broadband Subscriptions — ANATEL
 
 | Field       | Detail |
 |-------------|--------|
@@ -542,9 +520,9 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-#### 6. Air Pollution (Particulate Matter)
+### 6. Air Pollution (Particulate Matter)
 
-##### 6.1 CAMS PM Reanalysis (PM₁, PM₂.₅, PM₁₀)
+#### 6.1 CAMS PM Reanalysis (PM₁, PM₂.₅, PM₁₀)
 
 | Field       | Detail |
 |-------------|--------|
@@ -572,9 +550,9 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-#### 7. Climate Controls
+### 7. Climate Controls
 
-##### 7.1 Maximum Temperature — CHIRTS-ERA5
+#### 7.1 Maximum Temperature — CHIRTS-ERA5
 
 | Field       | Detail |
 |-------------|--------|
@@ -592,7 +570,7 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-##### 7.2 Precipitation — CHIRPS v3.0
+#### 7.2 Precipitation — CHIRPS v3.0
 
 | Field       | Detail |
 |-------------|--------|
@@ -609,9 +587,9 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-#### 8. Mortality Rates
+### 8. Mortality Rates
 
-##### 8.1 SIM — Sistema de Informações sobre Mortalidade (DATASUS)
+#### 8.1 SIM — Sistema de Informações sobre Mortalidade (DATASUS)
 
 | Field       | Detail |
 |-------------|--------|
@@ -635,9 +613,9 @@ browser) and save the `.zip` file to `datasets/`.
 
 ---
 
-#### 9. Forest Cover and Land Use
+### 9. Forest Cover and Land Use
 
-##### 9.1 MapBiomas — Annual Land Cover (Collection 10)
+#### 9.1 MapBiomas — Annual Land Cover (Collection 10)
 
 | Field       | Detail |
 |-------------|--------|
@@ -666,9 +644,9 @@ detect them.
 
 ---
 
-#### 10. Potential Soy Yield
+### 10. Potential Soy Yield
 
-##### 10.1 FAO-GAEZ v5 — Attainable Yield, Soy, High-Input
+#### 10.1 FAO-GAEZ v5 — Attainable Yield, Soy, High-Input
 
 | Field       | Detail |
 |-------------|--------|
