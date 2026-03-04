@@ -61,7 +61,7 @@ materials.
 
 #### Step 2 — Download raw data
 
-Follow the instructions in [Downloading Datasets](#2-downloading-datasets) and place all files
+Follow the instructions in [2. Downloading Datasets](#2-downloading-datasets) and place all files
 in the `datasets/` directory as described there.
 
 #### Step 3 — Set the working directory
@@ -86,9 +86,9 @@ Open `starlink_dataset.R` in RStudio and run it in full (Ctrl+Shift+Enter or
 `source("starlink_dataset.R")`).
 
 > ⚠️ **Runtime warning:** Some dataset process can take **several hours**
-> depending on available RAM and CPU. The script is designed to be resumable —
-> if interrupted, simply re-run and it will continue from the last completed
-> month.
+> depending on available RAM and CPU. In particular, particulate matter extraction (from CAMS-EAC4) 
+> was designed to be resumable — if interrupted, simply re-run and it will continue from the last 
+> completed month.
 
 #### Step 5 — Produce results
 
@@ -490,18 +490,17 @@ convention, making it easy to fold/unfold blocks in RStudio:
 | 6 | Climate Controls | Extracts area-weighted monthly maximum temperature (CHIRTS-ERA5) and precipitation (CHIRPS v3.0) from GeoTIFF rasters |
 | 7 | Mortality Rates | Reads SIM death records; classifies deaths by ICD-10 chapter; computes rates per 100,000 inhabitants including homicide sub-categories |
 | 8 | Forest Cover and Transitions | Reads MapBiomas annual land-cover rasters; computes forest cover share and year-to-year transition matrices (forest → other land uses) by municipality |
-| 9 | Potential Soy Yield | Extracts area-weighted attainable soybean yield (FAO-GAEZ v5, high-input scenario) as a heterogeneity instrument |
+| 9 | Potential Soy Yield | Extracts area-weighted attainable soybean yield (FAO-GAEZ v5, high-input scenario) for heterogeneity analysis |
 | 10 | Joining Datasets | Left-joins all processed `.RDS` files on `codmun × year` and writes the final `analytical_dataset.dta` |
 
 ### Key design choices
 
-- **CRS:** All spatial operations use SIRGAS 2000 Albers conical equal-area
-  (the standard for area computations in Brazil, as defined by IBGE). The
-  projection string is defined once at initialization and passed to all
-  `st_transform()` calls.
+- **CRS:** Some spatial operations use SIRGAS 2000 Albers conical equal-area
+  (the standard for area computations in Brazil, [as defined by IBGE](https://biblioteca.ibge.gov.br/visualizacao/livros/liv102169.pdf)) to calculate
+  areas within municipal polygons.
 - **ZIP reading:** Raw files are read directly from `.zip` archives using
-  `/vsizip/` (GDAL virtual filesystem) and `unz()`, so nothing needs to be
-  manually extracted.
+  `/vsizip/` (GDAL virtual filesystem) and `unz()`, so files do not need to be
+  manually extracted (except for CAMS-EAC4 data, since zip filename is not standardized).
 - **Resumable PM extraction:** Because processing CAMS NetCDF files can take
   several hours, Section 5 automatically detects the latest completed year/month
   in `datasets/processed/` and resumes from there.
