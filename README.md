@@ -357,7 +357,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
    - **Particulate matter d < 2.5 µm (PM2.5)**
    - **Particulate matter d < 10 µm (PM10)**
 5. Set the temporal coverage from **2017-01-01** to **2024-12-31**
-6. Select **all times** from 00:00 to 21::00
+6. Select **all times** from 00:00 to 21:00
 7. In **Geographical area**, select **Sub-region extraction** using: 6°N to −19°S, and −75°W to −43°W
 8. In **Format**, select **Zipped netCDF (experimental)**
 9. Click **Submit Form** and you will be redirected to a page where you can download your request after data processing (may take a hour)
