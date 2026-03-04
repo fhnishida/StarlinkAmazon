@@ -31,8 +31,8 @@ materials.
 
 > **Before running either file**, make sure all raw datasets have been
 > downloaded and placed in the correct subfolders. See
-> [Downloading Datasets](#2-downloading-datasets) for full instructions.
-
+> [2. Downloading Datasets](#2-downloading-datasets) for full instructions.
+ 
 ---
 
 ### How to Run
@@ -440,7 +440,7 @@ For example, for 2022:
 https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10/lulc/coverage/brazil_coverage_2022.tif
 ```
 
-2. Save all nine files inside `datasets/mapbiomas/`.
+2. Save all files inside `datasets/mapbiomas/`.
 
 ---
 
