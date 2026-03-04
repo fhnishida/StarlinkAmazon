@@ -140,11 +140,11 @@ datasets/
 ├── autos_infracao_icmbio_shp.zip
 ├── acessos_banda_larga_fixa.zip
 ├── data_sfc.nc
+├── DATA_GAEZ-V5_MAPSET_RES05-YXX_GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif
 ├── chirts-era5/          ← folder with yearly .tif files
 ├── chirps-v3.0/          ← folder with monthly .tif files
 ├── deaths/               ← folder with yearly .csv and zipped .csv files
 ├── mapbiomas/            ← folder with yearly .tif files
-├── DATA_GAEZ-V5_MAPSET_RES05-YXX_GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif
 └── processed/            ← created automatically by starlink_dataset.R
 ```
 
