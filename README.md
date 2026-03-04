@@ -73,6 +73,11 @@ root of this repository on your machine:
 setwd("/path/to/this/repository")
 ```
 
+and the DETER dataset name (depends on the date you downloaded):
+```r
+DETER_zip = "deter-amz-public-2025set01.zip" # example
+```
+
 Do the same in the `Initialization` chunk of `starlink_results.Rmd`.
 
 #### Step 4 — Build the dataset
