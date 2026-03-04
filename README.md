@@ -171,7 +171,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 | Field       | Detail |
 |-------------|--------|
 | **File**    | `tabela4714.csv` |
-| **Source**  | IBGE — SIDRA Table 4714 |
+| **Source**  | IBGE — SIDRA |
 | **URL**     | <https://sidra.ibge.gov.br/tabela/4714> |
 
 **Instructions:**
@@ -191,12 +191,12 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 | Field       | Detail |
 |-------------|--------|
 | **File**    | `Localidades_Municipios_kml.zip` |
-| **Source**  | IBGE — Geociências |
+| **Source**  | IBGE |
 | **URL**     | <https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/27385-localidades.html> |
 
 **Instructions:**
 
-1. Open the URL above. The page title is *Localidades*.
+1. Open the URL above. The page title is *Localidades do Brasil*.
 2. Scroll down to the **Localidades do Brasil - Municípios (kml)** section and click the link on **kml** for download (the full national KML package).
 3. Save the `Localidades_Municipios_kml.zip` file to `datasets/`. The script reads the Brasília KML from within the archive without extracting it.
 
