@@ -62,7 +62,7 @@ materials.
 #### Step 2 — Download raw data
 
 Follow the instructions in [2. Downloading Datasets](#2-downloading-datasets) and place all files
-in the `datasets/` directory as described there.
+in the `data/` directory as described there.
 
 #### Step 3 — Set the working directory
 
@@ -108,21 +108,21 @@ output HTML file.
 
 ```
 .
-├── starlink_dataset.R          # Step 1 — builds the analytical dataset
-├── starlink_results.Rmd          # Step 2 — produces all results
-├── README.md                     # This file
-├── analytical_dataset.dta        # This file
-└── datasets/
-    ├── [raw files]               # Downloaded by the user (see README_data.md)
+├── starlink_dataset.R            # Step 1 — builds the analytical dataset
+├── starlink_results.Rmd            # Step 2 — produces all results
+├── README.md                       # This file
+└── data/
+    ├── [raw files]                 # Downloaded by the user (see README_data.md)
     └── processed/                
-        └── [intermediary files]  # Created automatically by starlink_dataset.R
+        └── [intermediary files]    # Created automatically by starlink_dataset.R
+        └── analytical_dataset.dta  # Created automatically by starlink_dataset.R
 ```
 
 
 ---
 ## 2. Downloading Datasets
 
-This document describes all datasets required to run `starlink_dataset.R` and `starlink_results.Rmd`. The datasets are **not** included in this repository due to size and licensing constraints. Follow the instructions below to download each file and place it in the correct subfolder within `datasets/`.
+This document describes all datasets required to run `starlink_dataset.R` and `starlink_results.Rmd`. The datasets are **not** included in this repository due to size and licensing constraints. Follow the instructions below to download each file and place it in the correct subfolder within `data/`.
 
 > **Note for non-Portuguese speakers:** Several datasets are hosted on Brazilian government portals whose interfaces are entirely in Portuguese. Step-by-step instructions in English are provided for each of those cases.
 
@@ -130,10 +130,10 @@ This document describes all datasets required to run `starlink_dataset.R` and `s
 
 #### Repository structure
 
-After downloading all files, your `datasets/` directory should look like this:
+After downloading all files, your `data/` directory should look like this:
 
 ```
-datasets/
+data/
 ├── municipalities_legal_amazon.zip
 ├── tabela4714.csv
 ├── Localidades_Municipios_kml.zip
@@ -164,7 +164,7 @@ datasets/
 | **Source**  | TerraBrasilis — INPE |
 | **URL**     | <https://terrabrasilis.dpi.inpe.br/download/dataset/legal-amz-aux/vector/municipalities_legal_amazon.zip> |
 
-**Instructions:** Direct download — click the URL above (or paste it in your browser) and save the `.zip` file to `datasets/` without extracting it; the script reads directly from the archive.
+**Instructions:** Direct download — click the URL above (or paste it in your browser) and save the `.zip` file to `data/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -183,7 +183,7 @@ datasets/
 3. Click the **Download** button at the bottom of the page.
 4. A dialog box will appear. Under *Formato* (Format), select **CSV (US)**.
 5. Check the box **Exibir códigos de territórios** ("Show territory codes") — this    adds the numeric municipality code needed by the script.
-6. Click **Download** and save the file as `tabela4714.csv` inside `datasets/`.
+6. Click **Download** and save the file as `tabela4714.csv` inside `data/`.
 
 ---
 
@@ -199,7 +199,7 @@ datasets/
 
 1. Open the URL above. The page title is *Localidades do Brasil*.
 2. Scroll down to the **Localidades do Brasil - Municípios (kml)** section and click the link on **kml** for download (the full national KML package).
-3. Save the `Localidades_Municipios_kml.zip` file to `datasets/`. The script reads the Brasília KML from within the archive without extracting it.
+3. Save the `Localidades_Municipios_kml.zip` file to `data/`. The script reads the Brasília KML from within the archive without extracting it.
 
 ---
 
@@ -215,7 +215,7 @@ datasets/
 
 1. Open the URL above (ANA's metadata catalogue).
 2. Scroll down to **Linha de Costa (gpkg)**, click **Baixar** (Download).
-3. Download the GeoPackage file (`.gpkg`) and save it to `datasets/`.
+3. Download the GeoPackage file (`.gpkg`) and save it to `data/`.
 
 ---
 
@@ -234,7 +234,7 @@ datasets/
 1. Open the URL above. The page title is *Cobertura Móvel*.
 2. Scroll down and click on **Recursos** (Resources) section.
 3. Find the resource named **Cobertura Móvel** (Mobile Coverage) and download ZIP file.
-4. Save `cobertura_movel.zip` to `datasets/` without extracting it; the script reads directly from the archive.
+4. Save `cobertura_movel.zip` to `data/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -249,7 +249,7 @@ datasets/
 **Instructions:**
 
 1. From the same ANATEL page above and under **Recursos**, look for the resource named **Áreas Cobertas** (Coverage Areas) and download ZIP file.
-2. Save `areas_cobertas.zip` to `datasets/` without extracting it; the script reads directly from the archive.
+2. Save `areas_cobertas.zip` to `data/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -267,7 +267,7 @@ datasets/
 
 1. Open the URL above and look for the section **Bioma Amazônia - DETER (Avisos)** (Amazon Biome - DETER (Alerts).
 2. Download the most recent public shapefile of alerts (*deter-amz-public-(...).zip*). As of the time of writing, the file used is `deter-amz-public-2025set01.zip`.
-3. Save the `.zip` file to `datasets/` without extracting it; the script reads directly from the archive.
+3. Save the `.zip` file to `data/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -285,7 +285,7 @@ datasets/
 
 1. Open the URL. The page title is **Portal de Dados Abertos** (Open Data Portal).
 2. Click on **Recursos** (Resources), find **Autos de infração** and click on **Acessar o recurso** (Access the resource).
-3. Download the ZIP file `auto_infracao_csv.zip` and save it to `datasets/` without extracting it; the script reads directly from the archive.
+3. Download the ZIP file `auto_infracao_csv.zip` and save it to `data/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -301,7 +301,7 @@ datasets/
 
 1. Open the URL. The page title is *Dados geoespaciais de referência da Cartografia Nacional e dados temáticos produzidos no ICMBio*.
 2. Scroll down and click on **Autos de Infração ICMBio - shp**.
-3. Download the file and save it as `autos_infracao_icmbio_shp.zip` inside `datasets/` without extracting it; the script reads directly from the archive.
+3. Download the file and save it as `autos_infracao_icmbio_shp.zip` inside `data/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -319,7 +319,7 @@ datasets/
 
 1. Open the URL. The page title is *Acessos - Banda Larga Fixa*.
 2. Under **Recursos**, find **Dados de Acessos de Comunicação Multimídia** and click on **Acessar o recurso**
-3. Download `acessos_banda_larga_fixa.zip` and save it to `datasets/` without extracting it; the script reads directly from the archive.
+3. Download `acessos_banda_larga_fixa.zip` and save it to `data/` without extracting it; the script reads directly from the archive.
 
 > This dataset is used for both **Starlink** subscriptions and for other GEO satellite internet providers.
 
@@ -333,7 +333,7 @@ datasets/
 | **File**    | `data_sfc.nc` |
 |-------------|--------|
 | **Source**  | Copernicus Atmosphere Monitoring Service (CAMS) |
-| **URL**     | <https://ads.atmosphere.copernicus.eu/datasets/cams-global-reanalysis-eac4?tab=download> |
+| **URL**     | <https://ads.atmosphere.copernicus.eu/data/cams-global-reanalysis-eac4?tab=download> |
 
 **Instructions:**
 
@@ -348,7 +348,7 @@ datasets/
 7. In **Geographical area**, select **Sub-region extraction** using: 6°N to −19°S, and −75°W to −43°W
 8. In **Format**, select **Zipped netCDF (experimental)**
 9. Click **Submit Form** and you will be redirected to a page where you can download your request after data processing (may take a hour)
-10. Download the file and unzip it to `datasets/data_sfc.nc`.
+10. Download the file and unzip it to `data/data_sfc.nc`.
 
 ---
 
@@ -366,7 +366,7 @@ datasets/
 
 1. Open the URL and You will see a directory listing of monthly GeoTIFF files.
 2. Download the monthly GeoTIFF files for **2017–2024**.
-3. Place all `.tif` files inside `datasets/chirts-era5/`. The expected filename pattern is `CHIRTS-ERA5.monthly_Tmax.YYYY.MM.tif`, where YYYY is a year and MM is a month.
+3. Place all `.tif` files inside `data/chirts-era5/`. The expected filename pattern is `CHIRTS-ERA5.monthly_Tmax.YYYY.MM.tif`, where YYYY is a year and MM is a month.
 
 ---
 
@@ -382,7 +382,7 @@ datasets/
 
 1. Open the URL. You will see a directory listing of monthly GeoTIFF files.
 2. Download all files corresponding to **2017–2024**. File names follow the pattern `chirps-v3.0.YYYY.MM.tif`, where YYYY is a year and MM is a month.
-3. Save all `.tif` files inside `datasets/chirps-v3.0/`.
+3. Save all `.tif` files inside `data/chirps-v3.0/`.
 
 ---
 
@@ -401,7 +401,7 @@ datasets/
 1. Open the URL. The page title is *SIM — Declarações de Óbito*.
 2. Under **Recursos**, find and download the CSV files labelled **Mortalidade Geral YYYY** for each year from **2017 to 2024**. Some.
 3. Some of these files are zipped and other are unzipped CSV files with the following patterns `Mortalidade_Geral_YYYY` or `DOYYOPEN`.
-4. Save all files into `datasets/deaths` with their original names and formats:
+4. Save all files into `data/deaths` with their original names and formats:
   - 2017-2021: `Mortalidade_Geral_YYYY_csv.zip`, where YYYY is a year
   - 2022-2023: `DOYYOPEN.csv`, where YY is a year
   - 2024: `DO24OPEN_csv.zip`
@@ -432,7 +432,7 @@ For example, for 2022:
 https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10/lulc/coverage/brazil_coverage_2022.tif
 ```
 
-2. Save all files inside `datasets/mapbiomas/`.
+2. Save all files inside `data/mapbiomas/`.
 
 ---
 
@@ -449,7 +449,7 @@ https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10
 **Instructions:**
 
 1. Download the file using the URL.
-2. Save `GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif` to `datasets/`.
+2. Save `GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif` to `data/`.
 
 ---
 
@@ -475,7 +475,7 @@ The script is organized into numbered sections, making it easy to fold/unfold bl
 | 7 | Mortality Rates | Reads SIM death records; classifies deaths by ICD-10 chapter; computes rates per 100,000 inhabitants including homicide sub-categories |
 | 8 | Forest Cover and Transitions | Reads MapBiomas annual land-cover rasters; computes forest cover share and year-to-year transition matrices (forest → other land uses) by municipality |
 | 9 | Potential Soy Yield | Extracts area-weighted attainable soybean yield (FAO-GAEZ v5, high-input scenario) for heterogeneity analysis |
-| 10 | Joining Datasets | Left-joins all processed `.RDS` files on `codmun × year` and writes the final `analytical_dataset.dta` |
+| 10 | Joining Datasets | Left-joins all processed `.RDS` files on `codmun × year` and writes the final `data/processed/analytical_dataset.dta` |
 
 ### Key design choices
 
@@ -483,26 +483,26 @@ The script is organized into numbered sections, making it easy to fold/unfold bl
 - **ZIP reading:** Raw files are read directly from `.zip` archives using `/vsizip/` (GDAL virtual filesystem) and `unz()`, so files do not need to be
   manually extracted (except for CAMS-EAC4 data, since zip filename is not standardized).
 - **Resumable PM extraction:** Because processing CAMS NetCDF files can take several hours, Section 5 automatically detects the latest completed year/month
-  in `datasets/processed/` and resumes from there.
-- **Intermediary outputs:** Each section saves its result as an `.RDS` file in `datasets/processed/`. This allows individual sections to be re-run   independently without re-processing the entire pipeline.
+  in `data/processed/` and resumes from there.
+- **Intermediary outputs:** Each section saves its result as an `.RDS` file in `data/processed/`. This allows individual sections to be re-run   independently without re-processing the entire pipeline.
 
 ### Outputs
 
 | File | Description |
 |------|-------------|
-| `datasets/processed/munic.RDS` | Municipal panel (geography + covariates) |
-| `datasets/processed/deter.RDS` | DETER degradation alerts |
-| `datasets/processed/police.RDS` | Environmental enforcement fines |
-| `datasets/processed/starlink.RDS` | Starlink subscriptions per 1,000 inhabitants |
-| `datasets/processed/geosat.RDS` | Other GEO satellite subscriptions per 1,000 inhabitants |
-| `datasets/processed/pm_cams.RDS` | PM₁, PM₂.₅, PM₁₀ concentrations |
-| `datasets/processed/tmax.RDS` | Mean annual maximum temperature |
-| `datasets/processed/prcp.RDS` | Mean annual precipitation |
-| `datasets/processed/deaths.RDS` | Mortality rates by ICD-10 chapter |
-| `datasets/processed/mb_forest.RDS` | Forest cover share (MapBiomas) |
-| `datasets/processed/mbtrans.RDS` | Forest cover transitions (MapBiomas) |
-| `datasets/processed/soy_potential.RDS` | Attainable soybean yield (FAO-GAEZ) |
-| `analytical_dataset.dta` | **Final analytical dataset** |
+| `data/processed/munic.RDS` | Municipal panel (geography + covariates) |
+| `data/processed/deter.RDS` | DETER degradation alerts |
+| `data/processed/police.RDS` | Environmental enforcement fines |
+| `data/processed/starlink.RDS` | Starlink subscriptions per 1,000 inhabitants |
+| `data/processed/geosat.RDS` | Other GEO satellite subscriptions per 1,000 inhabitants |
+| `data/processed/pm_cams.RDS` | PM₁, PM₂.₅, PM₁₀ concentrations |
+| `data/processed/tmax.RDS` | Mean annual maximum temperature |
+| `data/processed/prcp.RDS` | Mean annual precipitation |
+| `data/processed/deaths.RDS` | Mortality rates by ICD-10 chapter |
+| `data/processed/mb_forest.RDS` | Forest cover share (MapBiomas) |
+| `data/processed/mbtrans.RDS` | Forest cover transitions (MapBiomas) |
+| `data/processed/soy_potential.RDS` | Attainable soybean yield (FAO-GAEZ) |
+| `data/processed/analytical_dataset.dta` | **Final analytical dataset** |
 
 ---
 
@@ -510,7 +510,7 @@ The script is organized into numbered sections, making it easy to fold/unfold bl
 
 ### Purpose
 
-Reads `analytical_dataset.dta` and reproduces all regression tables, event-study
+Reads `data/processed/analytical_dataset.dta` and reproduces all regression tables, event-study
 plots, heterogeneity analyses, and figures presented in the paper.
 
 ### Structure
