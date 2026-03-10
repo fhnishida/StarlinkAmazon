@@ -159,8 +159,6 @@ datasets/
 
 #### 1.1 Legal Amazon Municipalities Shapefile
 
-| Field       | Detail |
-|-------------|--------|
 | **File**    | `municipalities_legal_amazon.zip` |
 | **Source**  | TerraBrasilis / INPE |
 | **URL**     | <https://terrabrasilis.dpi.inpe.br/download/dataset/legal-amz-aux/vector/municipalities_legal_amazon.zip> |
