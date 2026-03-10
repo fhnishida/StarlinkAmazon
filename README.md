@@ -1,4 +1,4 @@
-# Replication code for "Does access to Starlink improve criminal capability in the Amazon?" (2026)
+# Replication code for "Effects of Starlink adoption on forest degradation in the Amazon" (2026)
 ### by Borges, Komatsu, Maturano, Nishida, and Menezes Filho
 
 ---
