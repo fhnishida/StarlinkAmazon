@@ -172,9 +172,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 1.2 Brazilian Municipalities — Population (2022 Census)
 
-| Field       | Detail |
-|-------------|--------|
+
 | **File**    | `tabela4714.csv` |
+|-------------|--------|
 | **Source**  | IBGE — SIDRA |
 | **URL**     | <https://sidra.ibge.gov.br/tabela/4714> |
 
@@ -192,9 +192,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 1.3 Brazilian Localities — Brasília KML
 
-| Field       | Detail |
-|-------------|--------|
+
 | **File**    | `Localidades_Municipios_kml.zip` |
+|-------------|--------|
 | **Source**  | IBGE |
 | **URL**     | <https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/27385-localidades.html> |
 
@@ -208,9 +208,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 1.4 South America Coastline
 
-| Field       | Detail |
-|-------------|--------|
+
 | **File**    | `geoft_bho_2017_linha_costa.gpkg` |
+|-------------|--------|
 | **Source**  | ANA — National Water and Sanitation Agency |
 | **URL**     | <https://metadados.snirh.gov.br/geonetwork/srv/por/catalog.search#/metadata/0f57c8a0-6a0f-4283-8ce3-114ba904b9fe> |
 
@@ -226,9 +226,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 2.1 Coverage by Census Sector (tabular)
 
-| Field       | Detail |
-|-------------|--------|
+
 | **Files**    | `cobertura_movel.zip` |
+|-------------|--------|
 | **Source**  | ANATEL — National Telecommunications Agency |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/cobertura_movel> |
 
@@ -244,9 +244,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 2.2 Coverage Polygons by Municipality (KML)
 
-| Field       | Detail |
-|-------------|--------|
+
 | **File**    | `areas_cobertas.zip` |
+|-------------|--------|
 | **Source**  | ANATEL — National Telecommunications Agency |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/cobertura_movel> |
 
@@ -262,9 +262,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 3.1 DETER Degradation Alerts (INPE)
 
-| Field       | Detail |
-|-------------|--------|
+
 | **File**    | `deter-amz-public-2025set01.zip` |
+|-------------|--------|
 | **Source**  | INPE — TerraBrasilis |
 | **URL**     | <https://terrabrasilis.dpi.inpe.br/downloads/> |
 
@@ -283,9 +283,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 4.1 IBAMA — Infraction Notices (*Autos de Infração*)
 
-| Field       | Detail |
-|-------------|--------|
+
 | **File**    | `auto_infracao_csv.zip` |
+|-------------|--------|
 | **Source**  | IBAMA — Brazilian Institute of Environment and Renewable Natural Resources |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/fiscalizacao-auto-de-infracao> |
 
@@ -300,9 +300,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 4.2 ICMBio — Infraction Notices (Shapefile)
 
-| Field       | Detail |
-|-------------|--------|
+
 | **File**    | `autos_infracao_icmbio_shp.zip` |
+|-------------|--------|
 | **Source**  | ICMBio — dados.gov.br |
 | **URL**     | <[https://dados.gov.br/dados/conjuntos-dados/autos-de-infracao-icmbio](https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais/mapa-tematico-e-dados-geoestatisticos-das-unidades-de-conservacao-federais)> |
 
@@ -320,9 +320,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 5.1 Fixed Broadband Subscriptions — ANATEL
 
-| Field       | Detail |
-|-------------|--------|
+
 | **File**    | `acessos_banda_larga_fixa.zip` |
+|-------------|--------|
 | **Source**  | ANATEL — Chico Mendes Institute for Biodiversity Conservation |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/acessos---banda-larga-fixa> |
 
@@ -341,9 +341,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 6.1 CAMS PM Reanalysis (PM₁, PM₂.₅, PM₁₀)
 
-| Field       | Detail |
-|-------------|--------|
+
 | **File**    | `data_sfc.nc` |
+|-------------|--------|
 | **Source**  | Copernicus Atmosphere Monitoring Service (CAMS) |
 | **URL**     | <https://ads.atmosphere.copernicus.eu/datasets/cams-global-reanalysis-eac4?tab=download> |
 
@@ -368,9 +368,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 7.1 Maximum Temperature — CHIRTS-ERA5
 
-| Field       | Detail |
-|-------------|--------|
+
 | **Files**   | Yearly `CHIRTS-ERA5.monthly_Tmax.YYYY.MM.tif` |
+|-------------|--------|
 | **Source**  | CHC — University of California, Santa Barbara |
 | **URL**     | <https://data.chc.ucsb.edu/experimental/CHIRTS-ERA5/tmax/tifs/monthly/> |
 
@@ -384,9 +384,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 7.2 Precipitation — CHIRPS v3.0
 
-| Field       | Detail |
-|-------------|--------|
+
 | **Files**   | Monthly `chirps-v3.0.YYYY.MM.tif` files |
+|-------------|--------|
 | **Source**  | CHC — University of California, Santa Barbara |
 | **URL**     | <https://data.chc.ucsb.edu/products/CHIRPS/v3.0/monthly/latam/tifs/> |
 
@@ -402,9 +402,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 8.1 SIM — Sistema de Informações sobre Mortalidade (DATASUS)
 
-| Field       | Detail |
-|-------------|--------|
+
 | **Files**    | `Mortalidade_Geral_YYYY_csv.zip`, `DOYYOPEN_csv.zip`, and `DO24OPEN.csv` |
+|-------------|--------|
 | **Source**  | Ministério da Saúde — DATASUS |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/sim-1979-2019> |
 
@@ -425,9 +425,9 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 #### 9.1 MapBiomas — Annual Land Cover (Collection 10)
 
-| Field       | Detail |
-|-------------|--------|
+
 | **Files**   | Yearly `brazil_coverage_YYYY.tif` files |
+|-------------|--------|
 | **Source**  | MapBiomas   |
 | **URL**     | Direct link below |
 
@@ -452,9 +452,9 @@ https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10
 
 #### 10.1 FAO-GAEZ v5 — Attainable Yield, Soy, High-Input
 
-| Field       | Detail |
-|-------------|--------|
+
 | **File**    | `DATA_GAEZ-V5_MAPSET_RES05-YXX_GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif` |
+|-------------|--------|
 | **Source**  | FAO — Global Agro-Ecological Zones v5 |
 | **URL**     | <https://storage.googleapis.com/fao-gismgr-gaez-v5-data/DATA/GAEZ-V5/MAPSET/RES05-YXX/GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif> |
 
