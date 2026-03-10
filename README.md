@@ -20,7 +20,7 @@ the paper. The workflow is strictly sequential:
 
 ```
 starlink_dataset.R   →   analytical_dataset.dta   →   starlink_results.Rmd
-   (data build)               (intermediary)              (results)
+   (data build)              (intermediary)                (results)
 ```
 
 `starlink_dataset.R` reads all raw datasets, processes them, and exports a
@@ -108,14 +108,14 @@ output HTML file.
 
 ```
 .
-├── starlink_dataset.R         # Step 1 — builds the analytical dataset
-├── starlink_results.Rmd         # Step 2 — produces all results
-├── README.md                    # This file
-├── analytical_dataset.dta       # This file
+├── starlink_dataset.R          # Step 1 — builds the analytical dataset
+├── starlink_results.Rmd          # Step 2 — produces all results
+├── README.md                     # This file
+├── analytical_dataset.dta        # This file
 └── datasets/
-    ├── [raw files]              # Downloaded by the user (see README_data.md)
-    └── processed/               
-        └── [intermediary files] # Created automatically by starlink_dataset.R
+    ├── [raw files]               # Downloaded by the user (see README_data.md)
+    └── processed/                
+        └── [intermediary files]  # Created automatically by starlink_dataset.R
 ```
 
 
@@ -146,7 +146,7 @@ datasets/
 ├── acessos_banda_larga_fixa.zip
 ├── data_sfc.nc
 ├── DATA_GAEZ-V5_MAPSET_RES05-YXX_GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif
-├── chirts-era5/          ← folder with yearly .tif files
+├── chirts-era5/          ← folder with monthly .tif files
 ├── chirps-v3.0/          ← folder with monthly .tif files
 ├── deaths/               ← folder with yearly .csv and zipped .csv files
 ├── mapbiomas/            ← folder with yearly .tif files
@@ -161,12 +161,10 @@ datasets/
 
 | **File**    | `municipalities_legal_amazon.zip` |
 |-------------|--------|
-| **Source**  | TerraBrasilis / INPE |
+| **Source**  | TerraBrasilis — INPE |
 | **URL**     | <https://terrabrasilis.dpi.inpe.br/download/dataset/legal-amz-aux/vector/municipalities_legal_amazon.zip> |
 
-**Instructions:** Direct download — click the URL above (or paste it in your
-browser) and save the `.zip` file to `datasets/` without extracting it; the script reads
-   directly from the archive.
+**Instructions:** Direct download — click the URL above (or paste it in your browser) and save the `.zip` file to `datasets/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -184,8 +182,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 2. Leave tick only on the following checkboxes: 'População residente (Pessoas)' and 'Município [5770/5770]'.
 3. Click the **Download** button at the bottom of the page.
 4. A dialog box will appear. Under *Formato* (Format), select **CSV (US)**.
-5. Check the box **Exibir códigos de territórios** ("Show territory codes") — this
-   adds the numeric municipality code needed by the script.
+5. Check the box **Exibir códigos de territórios** ("Show territory codes") — this    adds the numeric municipality code needed by the script.
 6. Click **Download** and save the file as `tabela4714.csv` inside `datasets/`.
 
 ---
@@ -237,8 +234,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 1. Open the URL above. The page title is *Cobertura Móvel*.
 2. Scroll down and click on **Recursos** (Resources) section.
 3. Find the resource named **Cobertura Móvel** (Mobile Coverage) and download ZIP file.
-4. Save `cobertura_movel.zip` to `datasets/` without extracting it; the script reads
-   directly from the archive.
+4. Save `cobertura_movel.zip` to `datasets/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -253,8 +249,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 **Instructions:**
 
 1. From the same ANATEL page above and under **Recursos**, look for the resource named **Áreas Cobertas** (Coverage Areas) and download ZIP file.
-2. Save `areas_cobertas.zip` to `datasets/` without extracting it; the script reads
-   directly from the archive.
+2. Save `areas_cobertas.zip` to `datasets/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -265,23 +260,20 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 | **File**    | `deter-amz-public-2025set01.zip` |
 |-------------|--------|
-| **Source**  | INPE — TerraBrasilis |
+| **Source**  | TerraBrasilis — INPE |
 | **URL**     | <https://terrabrasilis.dpi.inpe.br/downloads/> |
 
 **Instructions:**
 
 1. Open the URL above and look for the section **Bioma Amazônia - DETER (Avisos)** (Amazon Biome - DETER (Alerts).
-2. Download the most recent public shapefile of alerts
-   (*deter-amz-public-…zip*). As of the time of writing, the file used is
-   `deter-amz-public-2025set01.zip`.
-3. Save the `.zip` file to `datasets/` without extracting it; the script reads
-   directly from the archive.
+2. Download the most recent public shapefile of alerts (*deter-amz-public-(...).zip*). As of the time of writing, the file used is `deter-amz-public-2025set01.zip`.
+3. Save the `.zip` file to `datasets/` without extracting it; the script reads directly from the archive.
 
 ---
 
 ### 4. Environmental Enforcement
 
-#### 4.1 IBAMA — Infraction Notices (*Autos de Infração*)
+#### 4.1 IBAMA — Infraction Notices
 
 
 | **File**    | `auto_infracao_csv.zip` |
@@ -293,8 +285,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 1. Open the URL. The page title is **Portal de Dados Abertos** (Open Data Portal).
 2. Click on **Recursos** (Resources), find **Autos de infração** and click on **Acessar o recurso** (Access the resource).
-3. Download the ZIP file `auto_infracao_csv.zip` and save it to `datasets/` without extracting it; the script reads
-   directly from the archive.
+3. Download the ZIP file `auto_infracao_csv.zip` and save it to `datasets/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -303,16 +294,14 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 | **File**    | `autos_infracao_icmbio_shp.zip` |
 |-------------|--------|
-| **Source**  | ICMBio — dados.gov.br |
+| **Source**  | ICMBio — Chico Mendes Institute for Biodiversity Conservation |
 | **URL**     | <[https://dados.gov.br/dados/conjuntos-dados/autos-de-infracao-icmbio](https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais/mapa-tematico-e-dados-geoestatisticos-das-unidades-de-conservacao-federais)> |
 
 **Instructions:**
 
 1. Open the URL. The page title is *Dados geoespaciais de referência da Cartografia Nacional e dados temáticos produzidos no ICMBio*.
 2. Scroll down and click on **Autos de Infração ICMBio - shp**.
-3. Download the file and save it as `autos_infracao_icmbio_shp.zip` inside
-   `datasets/` without extracting it; the script reads
-   directly from the archive.
+3. Download the file and save it as `autos_infracao_icmbio_shp.zip` inside `datasets/` without extracting it; the script reads directly from the archive.
 
 ---
 
@@ -323,15 +312,14 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 | **File**    | `acessos_banda_larga_fixa.zip` |
 |-------------|--------|
-| **Source**  | ANATEL — Chico Mendes Institute for Biodiversity Conservation |
+| **Source**  | ANATEL — National Telecommunications Agency |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/acessos---banda-larga-fixa> |
 
 **Instructions:**
 
 1. Open the URL. The page title is *Acessos - Banda Larga Fixa*.
 2. Under **Recursos**, find **Dados de Acessos de Comunicação Multimídia** and click on **Acessar o recurso**
-3. Download `acessos_banda_larga_fixa.zip` and save it to `datasets/` without extracting it; the script reads
-   directly from the archive.
+3. Download `acessos_banda_larga_fixa.zip` and save it to `datasets/` without extracting it; the script reads directly from the archive.
 
 > This dataset is used for both **Starlink** subscriptions and for other GEO satellite internet providers.
 
@@ -369,7 +357,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 #### 7.1 Maximum Temperature — CHIRTS-ERA5
 
 
-| **Files**   | Yearly `CHIRTS-ERA5.monthly_Tmax.YYYY.MM.tif` |
+| **Files**   | Monthly `CHIRTS-ERA5.monthly_Tmax.YYYY.MM.tif` |
 |-------------|--------|
 | **Source**  | CHC — University of California, Santa Barbara |
 | **URL**     | <https://data.chc.ucsb.edu/experimental/CHIRTS-ERA5/tmax/tifs/monthly/> |
@@ -378,7 +366,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 
 1. Open the URL and You will see a directory listing of monthly GeoTIFF files.
 2. Download the monthly GeoTIFF files for **2017–2024**.
-3. Place all `.tif` files inside `datasets/chirts-era5/`. The expected filename pattern is `CHIRTS-ERA5.monthly_Tmax.YYYY.MM.tif`
+3. Place all `.tif` files inside `datasets/chirts-era5/`. The expected filename pattern is `CHIRTS-ERA5.monthly_Tmax.YYYY.MM.tif`, where YYYY is a year and MM is a month.
 
 ---
 
@@ -393,7 +381,7 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 **Instructions:**
 
 1. Open the URL. You will see a directory listing of monthly GeoTIFF files.
-2. Download all files corresponding to **2017–2024**. File names follow the pattern `chirps-v3.0.YYYY.MM.tif`.
+2. Download all files corresponding to **2017–2024**. File names follow the pattern `chirps-v3.0.YYYY.MM.tif`, where YYYY is a year and MM is a month.
 3. Save all `.tif` files inside `datasets/chirps-v3.0/`.
 
 ---
@@ -414,8 +402,8 @@ browser) and save the `.zip` file to `datasets/` without extracting it; the scri
 2. Under **Recursos**, find and download the CSV files labelled **Mortalidade Geral YYYY** for each year from **2017 to 2024**. Some.
 3. Some of these files are zipped and other are unzipped CSV files with the following patterns `Mortalidade_Geral_YYYY` or `DOYYOPEN`.
 4. Save all files into `datasets/deaths` with their original names and formats:
-  - 2017-2021: `Mortalidade_Geral_YYYY_csv.zip`
-  - 2022-2023: `DO22OPEN.csv` and `DO23OPEN.csv`
+  - 2017-2021: `Mortalidade_Geral_YYYY_csv.zip`, where YYYY is a year
+  - 2022-2023: `DOYYOPEN.csv`, where YY is a year
   - 2024: `DO24OPEN_csv.zip`
 
 
@@ -469,14 +457,11 @@ https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10
 
 ### Purpose
 
-Reads all raw datasets, performs spatial and tabular processing, and joins
-everything into a single municipality × year panel saved as
-`analytical_dataset.dta`.
+Reads all raw datasets, performs spatial and tabular processing, and joins everything into a single municipality × year panel saved as `analytical_dataset.dta`.
 
 ### Structure
 
-The script is organized into numbered sections using the `{ # N. SECTION ####`
-convention, making it easy to fold/unfold blocks in RStudio:
+The script is organized into numbered sections, making it easy to fold/unfold blocks in RStudio:
 
 | Section | Name | Description |
 |---------|------|-------------|
@@ -494,18 +479,12 @@ convention, making it easy to fold/unfold blocks in RStudio:
 
 ### Key design choices
 
-- **CRS:** Some spatial operations use SIRGAS 2000 Albers conical equal-area
-  (the standard for area computations in Brazil, [as defined by IBGE](https://biblioteca.ibge.gov.br/visualizacao/livros/liv102169.pdf)) to calculate
-  areas within municipal polygons.
-- **ZIP reading:** Raw files are read directly from `.zip` archives using
-  `/vsizip/` (GDAL virtual filesystem) and `unz()`, so files do not need to be
+- **CRS:** Some spatial operations use SIRGAS 2000 Albers conical equal-area (the standard for area computations in Brazil, [as defined by IBGE](https://biblioteca.ibge.gov.br/visualizacao/livros/liv102169.pdf)) to calculate areas within municipal polygons. 
+- **ZIP reading:** Raw files are read directly from `.zip` archives using `/vsizip/` (GDAL virtual filesystem) and `unz()`, so files do not need to be
   manually extracted (except for CAMS-EAC4 data, since zip filename is not standardized).
-- **Resumable PM extraction:** Because processing CAMS NetCDF files can take
-  several hours, Section 5 automatically detects the latest completed year/month
+- **Resumable PM extraction:** Because processing CAMS NetCDF files can take several hours, Section 5 automatically detects the latest completed year/month
   in `datasets/processed/` and resumes from there.
-- **Intermediary outputs:** Each section saves its result as an `.RDS` file in
-  `datasets/processed/`. This allows individual sections to be re-run
-  independently without re-processing the entire pipeline.
+- **Intermediary outputs:** Each section saves its result as an `.RDS` file in `datasets/processed/`. This allows individual sections to be re-run   independently without re-processing the entire pipeline.
 
 ### Outputs
 
@@ -544,7 +523,7 @@ plots, heterogeneity analyses, and figures presented in the paper.
 | `Covariates` | Model specs | Defines the list of covariate sets used across model specifications (Model I: no controls; Model II: full controls) |
 | `ResultsTable` | Table scaffold | Initializes the formatted results matrix |
 | `Estimations` | Main IV results | Estimates the 2SLS model with `feols()` for all outcome variables and both covariate sets; stores first-stage diagnostics; collects coefficients and confidence intervals for figures |
-| `PlaceboTest` | Event study | Estimates placebo/event-study regressions using the interaction of mobile coverage × year dummies as instruments; plots pre-trend tests |
+| `PlaceboTest` | Event study | Estimates placebo/event-study regressions using the interaction of mobile coverage × year dummies as instruments; plots pre-trend tests from 2017 to 2024 |
 | `FigHeterogeneity` | Heterogeneity | Splits the sample by soybean yield potential (above/below median) and re-estimates the main model separately for each half |
 | `FigMaps` | Maps | Builds Figure 1: maps of Starlink subscription rates, mobile coverage polygons, and DETER degradation alerts for 2022 and 2024 |
 | `FigDegradation` | Fig. 3 | Coefficient plots for forest degradation outcomes |
@@ -557,12 +536,9 @@ plots, heterogeneity analyses, and figures presented in the paper.
 
 The paper uses a **two-way fixed-effects instrumental variables** design:
 
-- **Endogenous variable:** Starlink subscriptions per 1,000 inhabitants
-  (`starlink`)
-- **Instrument:** Interaction of municipality-level 2021 mobile network coverage
-  (`coverarea`) × year dummies (`coverarea:year`)
-- **Fixed effects:** Municipality (`codmun`) + state × year
-  (`interaction(uf, year)`)
+- **Endogenous variable:** Starlink subscriptions per 1,000 inhabitants (`starlink`)
+- **Instrument:** Interaction of municipality-level 2021 mobile network coverage (`coverarea`) × year dummies (`coverarea:year`)
+- **Fixed effects:** Municipality (`codmun`) + state × year (`interaction(uf, year)`)
 - **Standard errors:** Clustered at the municipality level
 
 The `feols()` formula syntax used is:
