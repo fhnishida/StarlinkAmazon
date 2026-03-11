@@ -31,7 +31,7 @@ library(tidyverse)
 library(ggpubr)
 
 # Setting the working directory (root)
-setwd("C:/Users/fhnis/OneDrive - Insper/Starlink/publish/code")
+setwd(".../code")
 
 # DETER filename (for creating figure)
 DETER_zip = "deter-amz-public-2025set01.zip"
@@ -1365,6 +1365,7 @@ print(tab_1stB)
 ```{r FigS1, echo=F, fig.height=3, fig.width=6, dpi=200}
 print(fig_het_soyield_ful_mun_high + labs(title = NULL))
 ```
+
 
 
 
