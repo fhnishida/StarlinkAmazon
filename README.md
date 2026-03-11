@@ -466,15 +466,15 @@ The script is organized into numbered sections, making it easy to fold/unfold bl
 | Section | Name | Description |
 |---------|------|-------------|
 | 0 | Initialization | Loads packages, sets the working directory and the official Brazilian CRS (SIRGAS 2000 / Albers conical equal-area) |
-| 1 | Building Municipal Panel | Reads the Legal Amazon municipalities shapefile; appends 2022 Census population, 2021 mobile coverage, distances to the coast and Brasília, and centroids |
-| 2 | Forest Degradation | Reads DETER alerts (INPE), intersects with municipalities, computes flagged area and count by degradation type (fire, selective cutting, other) per municipality × month |
+| 1 | Building Municipal Panel | Reads the Legal Amazon municipalities shapefile; appends 2022 Census population, 2021 mobile coverage, and distances to the coast and Brasília |
+| 2 | Forest Degradation | Reads DETER alerts (INPE), intersects with municipalities, computes flagged area and count by degradation type (fire, selective cutting, other) per municipality × year |
 | 3 | Environmental Enforcement | Reads IBAMA and ICMBio infraction notices; classifies them by type (deforestation, fire, flora, fauna, pollution, administrative); aggregates to municipality × year |
 | 4 | Satellite Broadband | Reads ANATEL fixed-broadband subscription records; isolates Starlink (LEO) and other VSAT/GEO providers; normalizes by population |
-| 5 | Air Pollution | Extracts area-weighted monthly PM₁, PM₂.₅ and PM₁₀ concentrations from CAMS EAC4 NetCDF reanalysis files; converts units from kg/m³ to µg/m³ |
+| 5 | Air Pollution | Extracts area-weighted 3-hourly PM₁, PM₂.₅ and PM₁₀ concentrations from CAMS EAC4 NetCDF reanalysis files; aggregates to annual average and converts units from kg/m³ to µg/m³ |
 | 6 | Climate Controls | Extracts area-weighted monthly maximum temperature (CHIRTS-ERA5) and precipitation (CHIRPS v3.0) from GeoTIFF rasters |
-| 7 | Mortality Rates | Reads SIM death records; classifies deaths by ICD-10 chapter; computes rates per 100,000 inhabitants including homicide sub-categories |
+| 7 | Mortality Rates | Reads SIM death records; classifies deaths by ICD-10; computes rates per 100,000 inhabitants including homicide sub-categories |
 | 8 | Forest Cover and Transitions | Reads MapBiomas annual land-cover rasters; computes forest cover share and year-to-year transition matrices (forest → other land uses) by municipality |
-| 9 | Potential Soy Yield | Extracts area-weighted attainable soybean yield (FAO-GAEZ v5, high-input scenario) for heterogeneity analysis |
+| 9 | Potential Soy Yield | Extracts municipal attainable soybean yield (FAO-GAEZ v5, high-input scenario) for heterogeneity analysis |
 | 10 | Joining Datasets | Left-joins all processed `.RDS` files on `codmun × year` and writes the final `data/processed/analytical_dataset.dta` |
 
 ### Key design choices
@@ -518,7 +518,7 @@ plots, heterogeneity analyses, and figures presented in the paper.
 | Chunk | Name | Description |
 |-------|------|-------------|
 | `Initialization` | Setup | Loads packages, sets locale to handle Portuguese characters, defines helper functions |
-| `DataNormalization` | Data prep | Reads the `.dta` file; normalizes outcome variables by municipal area; creates year dummy columns for the event-study specification; applies unit rescaling |
+| `DataNormalization` | Data prep | Reads the `.dta` file; normalizes outcome variables by municipal area; creates year dummy columns for the event-study specification; applies unit normalization |
 | `VariableNames` | Variable labels | Defines a lookup table mapping internal variable names to display labels and classifying them as outcomes (`out`) or covariates (`cov`) |
 | `Covariates` | Model specs | Defines the list of covariate sets used across model specifications (Model I: no controls; Model II: full controls) |
 | `ResultsTable` | Table scaffold | Initializes the formatted results matrix |
