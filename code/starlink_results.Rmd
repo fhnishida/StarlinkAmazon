@@ -1,0 +1,1370 @@
+---
+title: "Replication code for 'Effects of Starlink adoption on forest degradation in the Amazon' (2026)"
+subtitle: "by Borges, Komatsu, Maturano, Nishida, and Menezes Filho"
+output: 
+  html_document: 
+    toc: yes
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 100% !important;
+  margin: auto;
+}
+</style>
+
+
+```{r Initialization, include=FALSE}
+# Initializing code
+rm(list=ls()); gc()
+options(dplyr.summarise.inform = FALSE)
+try(Sys.setlocale("LC_CTYPE", "pt_BR.UTF-8"), silent = TRUE) # for special chars
+
+# Loading required R packages 
+library(fixest)
+library(tidyverse)
+library(ggpubr)
+
+# Setting the working directory (root)
+setwd("C:/Users/fhnis/OneDrive - Insper/Starlink/publish/code")
+
+# DETER filename (for creating figure)
+DETER_zip = "deter-amz-public-2025set01.zip"
+
+# Function for turning first character to upper case
+first_upper = function(string) {
+  substr(string, 1, 1) = toupper(substr(string, 1, 1))
+  return(string)
+  }
+```
+
+
+---
+
+# Fixed-Effects IV Regression
+
+```{r DataNormalization, echo=F}
+# Dataset and normalization
+dta = haven::read_dta("../data/processed/analytical_dataset.dta") %>% 
+  filter(year >= 2017 & year <= 2024 & !is.na(coverarea)) %>%
+  mutate(year = factor(year, levels = as.character(2024:2017))) %>%
+  fastDummies::dummy_cols("year") %>%
+  mutate(ca_2017 = year_2017 * coverarea,
+         ca_2018 = year_2018 * coverarea,
+         ca_2019 = year_2019 * coverarea,
+         ca_2020 = year_2020 * coverarea,
+         ca_2021 = year_2021 * coverarea,
+         ca_2022 = year_2022 * coverarea,
+         ca_2023 = year_2023 * coverarea,
+         ca_2024 = year_2024 * coverarea,
+         sh_nonflo = 1 - sh_flo,
+         ) %>%
+  select(-starts_with("year_20"))
+
+
+# Creating new variables / Normalizing by area
+area_list = colnames(dta)[startsWith(colnames(dta),"area")]
+n_list = colnames(dta)[startsWith(colnames(dta),"n_")]
+sh_list = colnames(dta)[startsWith(colnames(dta),"sh_")]
+
+for (y in area_list) {
+  dta[[paste0("r_", y)]] = (dta[[y]] / dta[["areamun"]]) * 100
+}
+
+for (y in n_list) {
+  dta[[paste0("r_", y)]] = (dta[[y]] / dta[["areamun"]]) * 1000
+  }
+
+for (y in sh_list) {
+  dta[[y]] = dta[[y]] * 100
+}
+
+dta = dta %>% mutate(
+  areamun = areamun / 1000,
+  areaforest = areaforest / 1000,
+  dist_coast = dist_coast / 1000,
+  dist_brasilia = dist_brasilia / 1000,
+) %>% select(-r_areamun)
+```
+
+
+```{r VariableNames, echo=F}
+# Defining variables and names
+var_names = rbind(
+  # Outcomes
+  c("r_area_mun_deter_degr","Degradation (% munic. area)", "out"), 
+      c("r_area_mun_deter_degr_fire","   fire scars (% munic. area)", "out"),
+      c("r_area_mun_deter_degr_wood","   selective-cutting (% munic. area)", "out"),
+      c("r_area_mun_deter_degr_outr","   other means (% munic. area)", "out"),
+  
+  c("r_n_mun_deter_degr","Degradation (flags per 1,000 km²)", "out"),
+      c("r_n_mun_deter_degr_fire","   fire scars (flags per 1,000 km²)", "out"),
+      c("r_n_mun_deter_degr_wood","   selective-cutting (flags per 1,000 km²)", "out"),
+      c("r_n_mun_deter_degr_outr","   other means (flags per 1,000 km²)", "out"),
+  
+  c("sh_nonflo","Forest replaced (km²)", "out"),
+      c("sh_veg", "   by natural non-forest area", "out"),
+      c("sh_agr_agr", "   by cropland", "out"),
+      c("sh_agr_pec", "   by pasture", "out"),
+      c("sh_agr_out", "   by mosaic/forest plantation", "out"),
+      c("sh_nvg_agu", "   by water", "out"),
+      c("sh_nvg_urb", "   by urban infrastructure", "out"),
+      c("sh_nvg_min", "   by mining", "out"),
+      c("sh_nvg_out", "   by other non-vegetated area", "out"),
+  
+  c("r_n_mun_police","Enforcement fines (per 1,000 km²)", "out"),
+      c("r_n_mun_police_faun","   for fauna damage", "out"),
+      c("r_n_mun_police_polu","   for pollution", "out"),
+      c("r_n_mun_police_admi","   for admin. issues", "out"),
+      c("r_n_mun_police_flor","   for flora damage", "out"),
+      c("r_n_mun_police_defo","   degradation/deforestation", "out"),
+      c("r_n_mun_police_fire","   use of fire", "out"),
+  
+  c("pm10mun","Coarse particulate matter (PM10)", "out"),
+  c("pm25mun","Fine particulate matter (PM2.5)", "out"),
+  c("pm1mun","Submicron particulate matter (PM1)", "out"),
+  
+  c("mort_total","Deaths per 100,000 inhab.", "out"),
+      c("mort_extcause","   external cause", "out"),
+          c("hom","      homicide", "out"),
+          c("hom_fa","      homicide by fire arm", "out"),
+      c("mort_infect", "   infection", "out"),
+      c("mort_neoplasm", "   neoplasm", "out"),
+      c("mort_blood", "   blood disorders", "out"),
+      c("mort_endocrine", "   endocrine/metabolic issues", "out"),
+      c("mort_mental", "   mental disorders", "out"),
+      c("mort_nervous", "   nervous system", "out"),
+      c("mort_eyes", "   eye conditions", "out"),
+      c("mort_ears", "   ear conditions", "out"),
+      c("mort_circulatory", "   circulatory issues", "out"),
+      c("mort_respiratory", "   respiratory issues", "out"),
+      c("mort_digestive", "   digestive issues", "out"),
+      c("mort_skin", "   skin conditions", "out"),
+      c("mort_musculoskeletal", "   musculoskeletal issues", "out"),
+      c("mort_genitourinary", "   genitourinary issues", "out"),
+      c("mort_pregnancy", "   pregnancy/childbirth", "out"),
+      c("mort_perinatal", "   perinatal causes", "out"),
+      c("mort_malformation", "   malformations", "out"),
+      c("mort_other", "   other diseases", "out"),
+    
+  # Covariates  
+  c("coverarea", "Mobile coverage (% munic. area)", "cov"),
+  c("starlink", "Starlink per 1,000 inhab.", "cov"),
+  c("geosat", "GEO internet per 1,000 inhab.", "cov"),
+  c("areamun", "Municipal area (1,000 km²)", "cov"),
+  c("areaforest", "   Forested area (1,000 km²)", "cov"),
+  c("soyield_ful_mun_high", "Soy potential w/ high-tech (ton/ha)", "cov"),  
+  
+  c("lat","Latitude", "cov"),
+  c("lon","Longitude", "cov"),
+  c("pop","Population (1,000)", "cov"),
+  c("dens","Population density (pop./km²)", "cov"),
+  c("dist_coast","Distance to coast (1,000 km)", "cov"),
+  c("dist_brasilia","Distance to Brasilia (1,000 km)", "cov"),
+  c("tmax","Maximum temperature (ºC)", "cov"),
+  c("prcp","Annual precipitation (mm)", "cov")
+  
+  ) %>% as.data.frame()
+
+colnames(var_names) = c("var", "varname", "type")
+
+varlist = var_names$var[!grepl("prodes", var_names$var, ignore.case = TRUE) &
+                          var_names$type == "out"]
+
+```
+
+
+
+```{r DescriptiveStatistics, R.options = list(width = 1200), echo=F}
+# Descriptive statistics
+vars = c("r_area_mun_deter_degr", "r_area_mun_deter_degr_fire",
+         "r_area_mun_deter_degr_wood","r_area_mun_deter_degr_outr",
+         
+         "r_n_mun_deter_degr", "r_n_mun_deter_degr_fire",
+         "r_n_mun_deter_degr_wood","r_n_mun_deter_degr_outr",
+         
+         "r_n_mun_police", 
+         "r_n_mun_police_admi", "r_n_mun_police_polu", "r_n_mun_police_faun", 
+         "r_n_mun_police_flor", "r_n_mun_police_defo", "r_n_mun_police_fire", 
+         
+         "sh_nonflo", "sh_veg", "sh_agr_agr", "sh_agr_pec", "sh_agr_out",
+         "sh_nvg_min", "sh_nvg_agu", "sh_nvg_urb", "sh_nvg_out",
+         
+         "pm10mun", "pm25mun", "pm1mun",
+         "mort_total", "mort_extcause", "mort_neoplasm", "mort_endocrine",
+         
+         "coverarea", "starlink", "geosat",
+         "areamun", "areaforest", 
+         "lat", "lon", 
+         
+         "soyield_ful_mun_high",
+         
+         "pop", "dens", "dist_coast", "dist_brasilia", "tmax", "prcp"
+         )
+
+
+# function to format mean ± sd
+fmt = function(x, digits = 2) {
+  if (all(is.na(x))) return(NA_character_)
+  m = mean(x, na.rm = TRUE)
+  s = sd(x, na.rm = TRUE)
+  sprintf(paste0("%.", digits, "f ± %.", digits, "f"), m, s)
+}
+
+
+for (period in list(2017:2021, 2022:2024)) {
+  # create empty tab with names in first column and NA for groups
+  tab = data.frame(
+    Name = var_names$varname[match(vars, var_names$var)],
+    MeanSD = NA_character_,
+    stringsAsFactors = FALSE
+  )
+  
+  dta2 = dta %>% filter(year %in% as.character(period)) %>%
+        mutate(pop = pop / 1000, N = 1)
+  i=1
+  # fill tab by looping over vars
+  for (var in vars) {
+    colvals = dta2[[var]]
+    # compute per-group formatted strings
+    tab$MeanSD[i] = fmt(colvals)
+    i = i + 1
+  }
+  
+  tab = rbind(colnames(tab), 
+              c("N", nrow(dta2)/length(period)),
+              tab)
+  colnames(tab) = NULL
+  
+
+  assign(paste0("tab_stat_", first(period), "_", last(period)),
+         format(tab, justify = "left"))
+}
+# View(format(tab, justify = "left"))
+```
+
+
+```{r Covariates, echo=F}
+covlist = list(
+  # Model 1 - No covariates
+  c("1"), 
+  
+  # Model 2 - All covariates
+  c("year:lat", "year:lon", "year:dens", "year:areaforest", 
+    "year:dist_coast", "year:dist_brasilia", "tmax", "prcp", "geosat")
+)
+
+covs = unique(unlist(covlist))[unique(unlist(covlist)) != "1"]
+```
+
+
+
+```{r ResultsTable, echo=F}
+# Setting results table
+result = data.frame(matrix(ncol = 1 + length(covlist), 
+                           nrow = 2 + 2*length(varlist) + 2 + length(covs),
+                           data = ""))
+result[1, 1 + ceiling(length(covlist)/2)] = "Starlink"
+result[2, 1] = "Outcomes"
+result[2, 2:ncol(result)] = paste0("  (", as.roman(1:length(covlist)), ")")
+
+
+# # NEW
+result = cbind(result, data.frame(ci95 = "", t = "", p = ""))
+result[2, (ncol(result)-2):ncol(result)] = c("95% CI", "t-stat", "p-val")
+# # NEW
+
+i = 3 + 2*length(varlist)
+result[i, ] = "-------"
+result[i+1, 1] = "Covariates"
+i = i + 2
+
+
+for (cov in covs) {
+  result[i, 1] = paste0("   ", cov)
+  rownames(result)[i] = cov
+  i = i + 1
+}
+
+j = 2
+for (covs in covlist) {
+  if (covs[1] != "1") {
+    for (cov in covs) {
+      result[cov, j] = "   X"
+    }
+  }
+  j = j + 1
+}
+
+
+i = 3
+for (vardep in varlist) {
+  rownames(result)[i] = paste0(vardep, "_est")
+  rownames(result)[i+1] = paste0(vardep, "_se")
+  result[i, 1] = var_names$varname[which(vardep == var_names$var)]
+  
+  i = i + 2
+}
+
+```
+
+
+
+- Model I: no covariates
+- Model II: all covariates
+
+```{r Estimations, message=F, warning=F, R.options = list(width = 1200), echo=F}
+print(paste0("Covariates: ", paste(covs, collapse = ", ")))
+
+bd_fig = data.frame() # Store results to create figures
+j = 2
+for (covs in covlist) {
+  for (y in varlist) {
+    model = paste0(y, " ~ ",
+                   # Covariates
+                   paste0(covs, collapse=" + "),
+                   " | codmun + interaction(uf, year)", # fixed-effects
+                   " | starlink ~ coverarea:year") %>% as.formula()
+    
+    est = feols(model, data = dta %>% filter(reg_sample == 1), cluster="codmun")
+    tab = broom::tidy(est, conf.int = T, conf.level = .95)
+    
+    result[paste0(y,"_est"), j] = paste0(sprintf("%.3f", tab$estimate[1]),
+                                         case_when(
+                                           tab$p.value[1] <= .01 ~ "***",
+                                           tab$p.value[1] <= .05 ~ "**",
+                                           tab$p.value[1] <= .10 ~ "*",
+                                           TRUE ~ ""))
+    result[paste0(y,"_se"), j] = paste0("(", sprintf("%.3f", tab$std.error[1]), ")")
+    
+    if (all(covs == covlist[[length(covlist)]])) {
+      
+      if (y == varlist[1]) {
+        # 1st stage results
+        tab_1st = round(summary(est, stage = 1)$coeftable, 4)
+        tab_1stA = fitstat(est, ~cd + ivwald)
+        tab_1stB = paste0("R² = ", sprintf("%.4f", r2(summary(est, stage = 1))["r2"]))
+      }
+      
+      result[paste0(y, "_est"), "ci95"] = 
+        paste0("[", sprintf("%.3f", tab$conf.low[1]), ", ", sprintf("%.3f", tab$conf.high[1]), "]")
+      result[paste0(y, "_est"), "t"] = sprintf("%.3f", tab$statistic[1])
+      result[paste0(y, "_est"), "p"] = sprintf("%.3f", tab$p.value[1])
+      
+      aux = broom::tidy(est, conf.int = TRUE, conf.level = 0.95) %>%
+        rename(conf.low95 = conf.low, conf.high95 = conf.high) %>%
+        left_join(
+          broom::tidy(est, conf.int = TRUE, conf.level = 0.90) %>%
+            select(term, conf.low, conf.high) %>%
+            rename(conf.low90 = conf.low, conf.high90 = conf.high),
+          by = "term") %>%
+        filter(term == "fit_starlink") %>%
+        mutate(term = y)
+      
+      # Saving results for figures
+      bd_fig = bind_rows(bd_fig, aux)
+    }
+  }
+  
+  j = j + 1
+}
+rownames(result) = 1:nrow(result)
+colnames(result) = NULL
+
+
+print("# 2nd Stage # # # # # # # # # #")
+print(format(result[,-c((ncol(result)-2):(ncol(result)-1))], justify = "left"))
+# View(format(result[,-c((ncol(result)-2):(ncol(result)-1))], justify = "left"))
+```
+
+
+
+```{r FigDegradation, echo=F, fig.height=2.5, fig.width=8, message=F, warning=F}
+aux = bd_fig %>% filter(startsWith(term, "r_") & grepl("_degr", term)) %>%
+  mutate(type = case_when(grepl("_area_", term) ~ "area",
+                          grepl("_n_", term) ~ "n"))
+
+aux$term = var_names$varname[match(aux$term, var_names$var)]
+
+aux = aux %>%
+  mutate(
+    term = sub("\\s*\\(.*\\)$", "", term),
+    term = gsub("^\\s+|\\s+$", "", term), # removing leading spaces
+    term = sub("^by ", "", term),
+    term = ifelse(term == "Degradation", "total", term),
+    term = first_upper(term)
+  ) 
+
+aux$term = factor(aux$term, levels = unique(aux$term[nrow(aux):1]))
+
+# Degradation as % of municipal area
+fig_degr_mun_area = ggplot(aux %>% filter(type == "area"),
+                           aes(x = term, y = estimate)) +
+  geom_hline(yintercept = 0, color = "black", size = 0.5, linetype = "dashed") +
+  
+  geom_linerange(
+    aes(ymin = conf.low95, ymax = conf.high95, colour = "95% CI", group = type),
+    position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path"
+  ) +
+  geom_linerange(
+    aes(ymin = conf.low90, ymax = conf.high90, colour = "90% CI", group = type),
+    position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path"
+  ) +
+  scale_colour_manual(
+    name   = NULL,
+    breaks = c("90% CI", "95% CI"),
+    values = c("90% CI" = "grey60", "95% CI" = "grey80"),
+    guide  = guide_legend(
+      order = 2,
+      override.aes = list(shape = NA, linetype = 1, size = 3)
+    )
+  ) +
+
+  ggnewscale::new_scale_color() +
+
+  geom_point(
+    color = "red",
+    position = position_dodge(width = 0.5), size = 2,
+    key_glyph = "point"
+  ) +
+
+  labs(x = NULL, y = NULL, title = "Degradation (% munic. area)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 11.5),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    text = element_text(size = 11.5)
+  ) + 
+  coord_flip() + theme(legend.position = "right")
+
+
+# Degradation as flags per 1,000 km²
+fig_degr_mun_n = ggplot(aux %>% filter(type == "n"),
+                           aes(x = term, y = estimate)) +
+  geom_hline(yintercept = 0, color = "black", size = 0.5, linetype = "dashed") +
+  
+  geom_linerange(
+    aes(ymin = conf.low95, ymax = conf.high95, colour = "95% CI", group = type),
+    position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path"
+  ) +
+  geom_linerange(
+    aes(ymin = conf.low90, ymax = conf.high90, colour = "90% CI", group = type),
+    position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path"
+  ) +
+  scale_colour_manual(
+    name   = NULL,
+    breaks = c("90% CI", "95% CI"),
+    values = c("90% CI" = "grey60", "95% CI" = "grey80"),
+    guide  = guide_legend(
+      order = 2,
+      override.aes = list(shape = NA, linetype = 1, size = 3)
+    )
+  ) +
+
+  ggnewscale::new_scale_color() +
+
+  geom_point(
+    color = "red",
+    position = position_dodge(width = 0.5), size = 2,
+    key_glyph = "point"
+  ) +
+
+  labs(x = NULL, y = NULL, title = "Degradation (% munic. area)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 11.5),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    text = element_text(size = 11.5)
+  ) + 
+  coord_flip() + theme(legend.position = "right")
+
+
+# Joining both figures
+fig_degr_mun = ggarrange(fig_degr_mun_area, 
+                         fig_degr_mun_n + theme(axis.text.y  = element_blank()),
+                         widths = c(1,.7), common.legend = T, legend = "bottom")
+
+```
+
+
+
+```{r FigFines, echo=F, fig.height=3.5, fig.width=6}
+aux = bd_fig %>% filter(grepl("police", term)) %>%
+  mutate(
+    type = case_when(
+      grepl("_defo", term) ~ "Degrad./Deforest.",
+      grepl("_fire", term) ~ "Fire",
+      grepl("_flor", term) ~ "Flora",
+      grepl("_faun", term) ~ "Fauna",
+      grepl("_admi", term) ~ "Administrative",
+      grepl("_polu", term) ~ "Pollution",
+      TRUE ~ "Total"),
+    type = factor(type, levels = c("Fire", "Degrad./Deforest.", "Flora", "Fauna",
+                                   "Administrative", "Pollution", "Total")))
+
+fig_fines_mun = ggplot(aux, aes(x = type, y = estimate)) +
+  geom_hline(yintercept = 0, color = "black", size = 0.5, linetype = "dashed") +
+
+  geom_linerange(
+    aes(ymin = conf.low95, ymax = conf.high95, colour = "95% CI"),
+    position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path" 
+  ) +
+  geom_linerange(
+    aes(ymin = conf.low90, ymax = conf.high90, colour = "90% CI"),
+    position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path" 
+  ) +
+  scale_colour_manual(
+    name   = NULL,
+    breaks = c("90% CI", "95% CI"),
+    values = c("90% CI" = "grey60", "95% CI" = "grey80"),
+    guide  = guide_legend(
+      order = 2,
+      override.aes = list(shape = NA, linetype = 1, size = 3)
+    )
+  ) +
+
+  ggnewscale::new_scale_color() +
+
+  geom_point(
+    color = "red",
+    position = position_dodge(width = 0.5), size = 2,
+    key_glyph = "point"   
+  ) +
+
+  labs(x = NULL, y = NULL, title = "Fines per 1,000 km²") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 11.5),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    text = element_text(size = 11.5)
+  ) + 
+  coord_flip() + theme(legend.position = "bottom")
+
+```
+
+
+
+
+```{r FigPollutionDeath, echo=F, fig.height=4.5, fig.width=8}
+aux = bd_fig %>% filter(startsWith(term, "pm") | startsWith(term, "mort_")) %>%
+  mutate(type = factor(ifelse(startsWith(term, "pm"), "Pollutant (µg per m³)", "Deaths per 100,000 inhab."),
+                       levels = c("Pollutant (µg per m³)", "Deaths per 100,000 inhab.")),
+         term = ifelse(grepl("pm25", term), "pm25mun", term))
+
+aux$term = var_names$varname[match(aux$term, var_names$var)]
+
+aux = aux %>%
+  mutate(
+    term = gsub("^\\s+|\\s+$", "", term), # removing leading spaces
+    term = sub("^by ", "", term),
+    term = sub(" issues", "", term),
+    term = sub(" disorders", "", term),
+    term = sub(" conditions", "", term),
+    term = sub(" causes", "", term),
+    term = ifelse(term == "Deaths per 100,000 inhab.", "Total deaths", term),
+    term = first_upper(term),
+    term = ifelse(term == "Coarse particulate matter (PM10)", "PM10", term),
+    term = ifelse(term == "Fine particulate matter (PM2.5)", "PM2.5", term),
+    term = ifelse(term == "Submicron particulate matter (PM1)", "PM1", term),
+  ) 
+
+aux$term = factor(aux$term, levels = unique(aux$term)[length(unique(aux$term)):1])
+
+
+fig_pollut = ggplot(aux, aes(x = term, y = estimate)) +
+  geom_hline(yintercept = 0, color = "black", size = 0.5, linetype = "dashed") +
+
+  geom_linerange(
+    aes(ymin = conf.low95, ymax = conf.high95, colour = "95% CI"),
+    position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path"
+  ) +
+  geom_linerange(
+    aes(ymin = conf.low90, ymax = conf.high90, colour = "90% CI"),
+    position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path"
+  ) +
+  scale_colour_manual(
+    name   = NULL,
+    breaks = c("90% CI", "95% CI"),
+    values = c("90% CI" = "grey60", "95% CI" = "grey80"),
+    guide  = guide_legend(
+      order = 2,
+      override.aes = list(shape = NA, linetype = 1, size = 3)
+    )
+  ) +
+
+  ggnewscale::new_scale_color() +
+
+  geom_point(
+    color = "red",
+    position = position_dodge(width = 0.5), size = 2,
+    key_glyph = "point"
+  ) +
+  labs(x = NULL, y = NULL) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    text = element_text(size = 11.5)
+  ) +
+  coord_flip() +
+  facet_wrap(~ type, scales = "free",
+             ncol = 2
+             )
+```
+
+
+```{r FigForestConversion, echo=F, fig.height=4, fig.width=4.5}
+aux = bd_fig %>% filter(startsWith(term, "sh_"))
+
+aux$term = var_names$varname[match(aux$term, var_names$var)]
+
+aux = aux %>%
+  mutate(
+    term = sub("\\s*\\(.*\\)$", "", term),
+    term = gsub("^\\s+|\\s+$", "", term), # removing leading spaces
+    term = sub("^by ", "", term),
+    term = ifelse(term == "Forest replaced", "total", term),
+    term = first_upper(term)
+  ) 
+
+aux$term = factor(aux$term, levels = aux$term[length(aux$term):1])
+
+
+fig_forest_conv = ggplot(aux, aes(x = term, y = estimate)) +
+  geom_hline(yintercept = 0, color = "black", size = 0.5, linetype = "dashed") +
+
+  geom_linerange(
+    aes(ymin = conf.low95, ymax = conf.high95, colour = "95% CI"),
+    position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path"
+  ) +
+  geom_linerange(
+    aes(ymin = conf.low90, ymax = conf.high90, colour = "90% CI"),
+    position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path"
+  ) +
+  scale_colour_manual(
+    name   = NULL,
+    breaks = c("90% CI", "95% CI"),
+    values = c("90% CI" = "grey60", "95% CI" = "grey80"),
+    guide  = guide_legend(
+      order = 2,
+      override.aes = list(shape = NA, linetype = 1, size = 3)
+    )
+  ) +
+
+  ggnewscale::new_scale_color() +
+
+  geom_point(
+    color = "red",
+    position = position_dodge(width = 0.5), size = 2,
+    key_glyph = "point"   
+  ) +
+
+  labs(x = NULL, y = "% forested area in previous year") +
+  theme_minimal() +
+  theme(
+    panel.grid.major.y = element_blank(),
+    text = element_text(size = 11.5)
+  ) +
+  coord_flip() + theme(legend.position = "bottom")
+```
+
+
+```{r PlaceboTest, message=F, warning=F, fig.height=3.5, fig.width=5, echo=F}
+# Placebo/Event study tests
+varlist = list("r_area_mun_deter_degr",  "r_n_mun_deter_degr")
+
+covs = covlist[[length(covlist)]] # full set of covariates
+
+for (var in varlist) {
+  tab = tibble()
+  
+  model = paste0(var, " ~ ", 
+                 "ca_2017 + ca_2018 + ca_2019 + ca_2020 + ca_2021 + ca_2023 + ca_2024 + ",
+                 paste(covs, collapse = " + "),
+                 " | codmun + interaction(uf, year)") %>%
+    as.formula()
+  
+  est = feols(model, data = dta, cluster = "codmun")
+  est = broom::tidy(est, conf.int = TRUE, conf.level = 0.95) %>%
+    rename(conf.low95 = conf.low, conf.high95 = conf.high) %>%
+    left_join(
+      broom::tidy(est, conf.int = TRUE, conf.level = 0.90) %>%
+          select(term, conf.low, conf.high) %>%
+          rename(conf.low90 = conf.low, conf.high90 = conf.high),
+        by = "term") %>% 
+    select(term, estimate, starts_with("conf.")) %>%
+    mutate(term = as.numeric(gsub("ca_", "", term))) %>%
+    filter(!is.na(term)) %>%
+    rbind(tibble(term = 2022, estimate = 0, conf.low95 = 0, conf.high95 = 0,
+                 conf.low90 = 0, conf.high90 = 0)) %>% 
+    arrange(term) %>%
+    rename(year = term)
+    
+  tab = bind_rows(tab, est)
+  
+  var_name = var_names$varname[which(var == var_names$var)]
+  var_name = gsub("^\\s+|\\s+$", "", var_name) # removing leading spaces
+  var_name = ifelse(grepl("degr_", var), paste0("Degradation ", var_name), var_name)
+  var_name = ifelse(grepl("defo_", var), paste0("Deforestation ", var_name), var_name)
+  
+  
+  assign(
+    paste0("es_", var, "_mun"),
+    ggplot(tab, aes(x = year, y = estimate)) +
+    geom_hline(yintercept = 0, color = "black", size = 0.5, linetype = "dashed") +
+    geom_vline(xintercept = 2022, color = "gray90", size = 1) +
+
+    geom_linerange(
+      aes(ymin = conf.low95, ymax = conf.high95, colour = "95% CI"),
+      position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path"
+    ) +
+    geom_linerange(
+      aes(ymin = conf.low90, ymax = conf.high90, colour = "90% CI"),
+      position = position_dodge(width = 0.5), size = 2, show.legend = TRUE, key_glyph = "path"
+    ) +
+    scale_colour_manual(
+      name   = NULL,
+      breaks = c("90% CI", "95% CI"),
+      values = c("90% CI" = "grey60", "95% CI" = "grey80"),
+      guide  = guide_legend(
+        order = 2,
+        override.aes = list(shape = NA, linetype = 1, size = 3)
+      )
+    ) +
+
+    ggnewscale::new_scale_color() +
+    
+    geom_point(position = position_dodge(width = 0.5), size = 1.5, color = "red") +
+    labs(x = "Year", y = "Estimate", color = "Group") +
+    theme_minimal() +
+    theme(text = element_text(size = 11.5), 
+          panel.grid.minor.y = element_blank())
+  )
+  
+}
+
+# Joining both placebos
+fig_es_degr = ggarrange(
+  es_r_area_mun_deter_degr_mun + labs(title = "a", y = "% munic. area"),
+  es_r_n_mun_deter_degr_mun + labs(title = "b", y = "flags per 1,000 km²"),
+  ncol = 1, nrow = 2,
+  common.legend = TRUE, legend = "right")
+```
+
+
+## Heterogeneity
+Splits observations in half based on a grouping variable (high x low) and estimate results separately.
+
+```{r FigHeterogeneity, message=F, warning=F, R.options = list(width = 1200), echo=F}
+varlist = var_names$var[grepl("degr", var_names$var)]
+bd_fig = data.frame() # Store results to create figures
+
+{ # Results table
+  result = data.frame(matrix(ncol = 1 + length(covlist), 
+                             nrow = 2 + 2*length(varlist) + 2 + length(covs),
+                             data = ""))
+  result[1, 1] = ""
+  result[2, 1] = "Outcomes"
+  result[2, 2:ncol(result)] = paste0("(", as.roman(1:length(covlist)), "-high)")
+  
+  
+  i = 3 + 2*length(varlist)
+  result[i, ] = "-------"
+  result[i+1, 1] = "Covariates"
+  i = i + 2
+  
+  
+  for (cov in covs) {
+    result[i, 1] = paste0("   ", cov)
+    rownames(result)[i] = cov
+    i = i + 1
+  }
+  
+  j = 2
+  for (covs in covlist) {
+    if (covs[1] != "1") {
+      for (cov in covs) {
+        result[cov, j] = "   X"
+      }
+    }
+    j = j + 1
+  }
+  
+  i = 3
+  for (vardep in varlist) {
+    rownames(result)[i] = paste0(vardep, "_est")
+    rownames(result)[i+1] = paste0(vardep, "_se")
+    result[i, 1] = var_names$varname[which(vardep == var_names$var)]
+    i = i + 2
+  }
+  
+  aux = result[2:ncol(result)]
+  for (j in 1:ncol(aux)) {
+    aux[[j]] = gsub("-high", "-low", aux[[j]])
+  }
+  
+  result = cbind(result, aux)
+  result[1, ceiling(ncol(result)/2)] = "Starlink"
+}
+
+dta2 = dta %>% mutate(high = soyield_ful_mun_high > median(soyield_ful_mun_high) * 1)
+
+
+j = 2
+for (covs in covlist) {
+  for (y in varlist) {
+    model = paste0(y, " ~ ",
+                   # Covariates
+                   paste0(covs, collapse=" + "),
+                   " | codmun + interaction(uf, year)", # fixed-effects
+                   " | starlink ~ coverarea:year") %>% as.formula()
+    
+    # HIGH
+    est = feols(model, data = dta2 %>% 
+                  filter(reg_sample == 1 & high == 1), cluster = "codmun")
+    tab = broom::tidy(est)
+    
+    result[paste0(y,"_est"), j] = paste0(sprintf("%.3f", tab$estimate[1]),
+                                         case_when(
+                                           tab$p.value[1] <= .01 ~ "***",
+                                           tab$p.value[1] <= .05 ~ "**",
+                                           tab$p.value[1] <= .10 ~ "*",
+                                           TRUE ~ ""))
+    result[paste0(y,"_se"), j] = paste0("(", sprintf("%.3f", tab$std.error[1]), ")")
+    
+    if (all(covs == covlist[[length(covlist)]])) {
+      aux = broom::tidy(est, conf.int = TRUE, conf.level = 0.95) %>%
+        rename(conf.low95 = conf.low, conf.high95 = conf.high) %>%
+        left_join(
+          broom::tidy(est, conf.int = TRUE, conf.level = 0.90) %>%
+            select(term, conf.low, conf.high) %>%
+            rename(conf.low90 = conf.low, conf.high90 = conf.high),
+          by = "term") %>%
+        filter(term == "fit_starlink") %>%
+        mutate(term = y, half = "high")
+      bd_fig = bind_rows(bd_fig, aux)
+    }
+    
+    # LOW
+    est = feols(model, data = dta2 %>% 
+                  filter(reg_sample == 1 & high == 0), cluster = "codmun")
+    tab = broom::tidy(est)
+    
+    result[paste0(y,"_est"), j + length(covlist)] = 
+      paste0(sprintf("%.3f", tab$estimate[1]),
+             case_when(tab$p.value[1] <= .01 ~ "***",
+                       tab$p.value[1] <= .05 ~ "**",
+                       tab$p.value[1] <= .10 ~ "*",
+                       TRUE ~ ""))
+    result[paste0(y,"_se"), j + length(covlist)] = 
+      paste0("(", sprintf("%.3f", tab$std.error[1]), ")")
+    
+    if (all(covs == covlist[[length(covlist)]])) {
+      aux = broom::tidy(est, conf.int = TRUE, conf.level = 0.95) %>%
+        rename(conf.low95 = conf.low, conf.high95 = conf.high) %>%
+        left_join(
+          broom::tidy(est, conf.int = TRUE, conf.level = 0.90) %>%
+            select(term, conf.low, conf.high) %>%
+            rename(conf.low90 = conf.low, conf.high90 = conf.high),
+          by = "term") %>%
+        filter(term == "fit_starlink") %>%
+        mutate(term = y, half = "low")
+      bd_fig = bind_rows(bd_fig, aux)
+    }
+  }
+  
+  j = j + 1
+}
+
+rownames(result) = 1:nrow(result)
+colnames(result) = NULL
+
+print("## Heterogeneity by Soy potential w/ high-tech (ton/ha)")
+print(summary(dta$soyield_ful_mun_high))
+print(format(result, justify = "left"))
+print(" ")
+
+
+# Figure
+aux = bd_fig %>% 
+  mutate(
+    name = var_names$varname[match(term, var_names$var)],
+    half = ifelse(half == "high", "High", "Low"),
+    name = sub("\\s*\\(.*\\)$", "", name),
+    name = gsub("^\\s+|\\s+$", "", name), # removing leading spaces
+    name = sub("^by ", "", name),
+    name = ifelse(name == "Degradation", "total", name)
+  )
+
+ordem = c("Other means", "Selective-cutting", "Fire scars", "Total")
+
+fig_het_soyield_ful_mun_high = 
+  ggplot(
+    aux %>% filter(grepl("r_area", term) & grepl("degr", term)) %>%
+      mutate(name = first_upper(name), name = factor(name, levels = ordem)),
+    aes(x = name, y = estimate)
+  ) +
+  geom_hline(
+    yintercept = 0,
+    color = "black",
+    size = 0.5,
+    linetype = "dashed"
+  ) +
+  
+  geom_linerange(
+    aes(
+      ymin = conf.low95,
+      ymax = conf.high95,
+      colour = "95% CI",
+      group = half
+    ),
+    position = position_dodge(width = 0.5),
+    size = 2,
+    show.legend = TRUE,
+    key_glyph = "path"
+  ) +
+  geom_linerange(
+    aes(
+      ymin = conf.low90,
+      ymax = conf.high90,
+      colour = "90% CI",
+      group = half
+    ),
+    position = position_dodge(width = 0.5),
+    size = 2,
+    show.legend = TRUE,
+    key_glyph = "path"
+  ) +
+  scale_colour_manual(
+    name   = NULL,
+    breaks = c("90% CI", "95% CI"),
+    values = c("90% CI" = "grey60", "95% CI" = "grey80"),
+    guide  = guide_legend(
+      order = 2,
+      override.aes = list(
+        shape = NA,
+        linetype = 1,
+        size = 3
+      )
+    )
+  ) +
+  
+  ggnewscale::new_scale_color() +
+  
+  geom_point(
+    aes(color = half),
+    position = position_dodge(width = 0.5),
+    size = 2,
+    key_glyph = "point"
+  ) +
+  scale_color_manual(
+    name   = NULL,
+    values = c("High" = "red", "Low" = "black"),
+    guide  = guide_legend(
+      order = 1,
+      override.aes = list(
+        linetype = 0,
+        shape = 16,
+        size = 2
+      )
+    )
+  ) +
+  
+  labs(x = NULL, y = "Degradation (% munic. area)",
+       title = "Heterogeneity by Soy potential w/ high-tech (ton/ha)") +
+  theme_minimal() +
+  theme(
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    text = element_text(size = 11.5)
+  ) +
+  coord_flip() + theme(legend.position = "right") 
+
+```
+
+
+# Figures and Tables
+
+```{r FigMaps, include=FALSE, message=F, warning=F}
+library(sf)
+
+# Starlink subscription rates
+starlink = readRDS("../data/processed/starlink.RDS")
+
+# Municipalities polygons
+munic_sf = st_read("/vsizip/../data/municipalities_legal_amazon.zip/municipalities_legal_amazon.shp") %>%
+  st_make_valid() %>% st_transform(4674) %>% st_make_valid() %>%
+  mutate(codmun = as.numeric(geocodigo)) %>%
+  select(codmun) %>% merge(c(2022, 2024)) %>% rename(year = y) %>%
+  left_join(starlink, by = c("codmun", "year")) %>%
+  mutate(starlink = ifelse(is.na(starlink), 0, starlink))
+
+
+# Mobile Coverage Shapefile
+# Aggregate KML files and export as GEOPKG
+# List of KML files inside a ZIP (CRS: WGS 84)
+  # https://dados.gov.br/dados/conjuntos-dados/cobertura_movel
+uf_list = c("ac","am","ap","ma","mt","pa","ro","rr","to")
+
+coverage = data.frame()
+for (UF in uf_list) {
+  # read KML without extracting it and bind with kml_uf
+  coverage = rbind(
+    coverage,
+    st_read(paste0("/vsizip/../data/areas_cobertas.zip/todas_todas_",
+                   UF,"_municipio_simple.kml")) %>%
+      mutate(sigla_uf=toupper(UF)))
+}
+
+coverage = coverage %>% st_make_valid() %>% 
+  st_transform(4674) %>% st_make_valid() %>%
+  st_intersection(munic_sf %>% mutate(class = "BR") %>% group_by(class) %>%
+                    summarise(geometry = st_union(geometry))) 
+
+# Degradation Shapefile
+degrad = st_read(paste0("/vsizip/../data/", DETER_zip, "/deter-amz-deter-public.shp")) %>%
+  st_make_valid() %>% rename(class = CLASSNAME, codmun=GEOCODIBGE)  %>%
+    mutate(year = year(VIEW_DATE),
+           codmun = as.numeric(codmun),
+           class = case_when(
+             class=="CICATRIZ_DE_QUEIMADA" ~ "deter_degr_fire",
+             class=="DEGRADACAO" ~ "deter_degr_outr",
+             class=="CS_DESORDENADO" ~ "deter_degr_wood",
+             class=="CS_GEOMETRICO" ~ "deter_degr_wood",
+             class=="CORTE_SELETIVO" ~ "deter_degr_wood",
+           )) %>%
+    filter(year %in% c(2022, 2024) & !is.na(class)) %>%
+  select(codmun, year, class)
+
+years = c(2022, 2024)
+breaks = quantile(munic_sf$starlink[munic_sf$year == 2024],
+                  probs = c(0, .2, .4, .6, .8, 1)) # quintiles in 2024
+
+labels = c("[0.0 - 0.5]", "(0.5 – 2.0]", "(2.0 – 5.0]", "(5.0 – 9.8]", "(9.8 – 112.2]")
+cols = c(
+  "#FFFFFF",  # white for zero
+  "#D8D8D8",  # light
+  "#AEAEAE",  # light–mid
+  "#5F5F5F",  # mid–dark
+  "#2B2B2B"   # very dark
+)
+
+col_palette = setNames(cols, labels)
+col_na = "#E0E0E0"    # color for NA / no data
+
+  
+# Creating dummy polygon to show missing values in legend
+make_poly = function(shp, x = -57, y = 5, year = 2022, value = 0) {
+  crs_map = st_crs(shp)
+  
+  # point in map CRS
+  pt = st_as_sf(data.frame(x = x, y = y), coords = c("x", "y"), crs = crs_map)
+  
+  # small buffer in meters -> MULTIPOLYGON -> back to map CRS
+  mp = pt %>%
+    st_transform(3857) %>%
+    st_buffer(10) %>%
+    st_make_valid() %>%
+    st_cast("MULTIPOLYGON") %>%
+    st_transform(crs_map)
+  
+  # attach attributes (ensure factor has all levels)
+  mp = mp %>% mutate(codmun = 9999999, year = year, starlink = value)
+  mp
+}
+
+munic_sf = bind_rows(munic_sf, 
+                     make_poly(munic_sf, year=2022, value=56), 
+                     make_poly(munic_sf, year=2022, value=7), 
+                     make_poly(munic_sf, year=2022, value=4), 
+                     make_poly(munic_sf, year=2022, value=1)) %>%
+  mutate(starlink_bin = factor(
+    cut(starlink, breaks = breaks, labels = labels,
+        include.lowest = TRUE, right = TRUE),
+    levels = labels)
+    )
+
+
+name = "degr"
+loss1 = degrad %>% filter(year == 2022)
+loss2 = degrad %>% filter(year == 2024)
+
+starlink_degr_2022 = ggplot(munic_sf %>% filter(year == 2022)) +
+  geom_sf(
+    aes(fill = starlink_bin),
+    color = "grey20",
+    size = 0.05,
+    alpha = .8
+  ) +
+  scale_fill_manual(
+    name = "Starlink per 1,000",
+    values = col_palette,
+    na.value = col_na,
+    limits = labels,
+    drop = FALSE
+  ) +
+  
+  ggnewscale::new_scale_fill() +
+  
+  # 2) Coverage:
+  geom_sf(data = coverage,
+          aes(fill = "Mobile"),
+          alpha = 0.9,
+          color = NA) +
+  scale_fill_manual(
+    name   = NULL,
+    values = c("Mobile" = "blue"),
+    breaks = "Mobile",
+    labels = "Mobile",
+    guide  = guide_legend(override.aes = list(alpha = 0.9, color = NA))
+  ) +
+  
+  ggnewscale::new_scale_fill() +
+  
+  # 3) Degradation
+  geom_sf(
+    data = loss1,
+    aes(fill = name),
+    alpha = .5,
+    color = "red",
+    linewidth = 0.1
+  ) +
+  scale_fill_manual(
+    name   = NULL,
+    values = setNames("red", name),
+    breaks = name,
+    labels = name,
+    guide  = guide_legend(override.aes = list(alpha = .9, color = NA))
+  ) +
+  
+  theme_minimal() + coord_sf(datum = NA) +
+  theme(
+    text = element_text(size = 11),
+    legend.text = element_text(size = 8),
+    legend.title = element_text(size = 8.5),
+    legend.key.height = unit(4, "mm"),
+    legend.key.width = unit(5, "mm"),
+    legend.box.spacing = unit(1, "mm"),
+    legend.margin = margin(0, 0, 0, 0),
+    plot.margin = margin(0, 0, 0, 0)
+  ) +
+  annotate(
+    "text",
+    x = -57,
+    y = 5,
+    label = 2022,
+    size = 3.5,
+    hjust = 0.5
+  )
+  
+
+starlink_degr_2024 = ggplot(munic_sf %>% filter(year == 2024)) +
+  geom_sf(
+    aes(fill = starlink_bin),
+    color = "grey20",
+    size = 0.05,
+    alpha = .8
+  ) +
+  scale_fill_manual(
+    name = "Starlink per 1,000",
+    values = col_palette,
+    na.value = col_na,
+    limits = labels,
+    drop = FALSE
+  ) +
+  
+  ggnewscale::new_scale_fill() +
+  
+  # 2) Coverage:
+  geom_sf(data = coverage,
+          aes(fill = "Mobile"),
+          alpha = 0.9,
+          color = NA) +
+  scale_fill_manual(
+    name   = NULL,
+    values = c("Mobile" = "blue"),
+    breaks = "Mobile",
+    labels = "Mobile",
+    guide  = guide_legend(override.aes = list(alpha = 0.9, color = NA))
+  ) +
+  
+  ggnewscale::new_scale_fill() +
+  
+  # 3) Degradation
+  geom_sf(
+    data = loss2,
+    aes(fill = name),
+    alpha = .5,
+    color = "red",
+    linewidth = 0.05
+  ) +
+  scale_fill_manual(
+    name   = NULL,
+    values = setNames("red", name),
+    breaks = name,
+    labels = name,
+    guide  = guide_legend(override.aes = list(alpha = .9, color = NA))
+  ) +
+  
+  theme_minimal() + coord_sf(datum = NA) +
+  theme(
+    text = element_text(size = 12),
+    legend.text = element_text(size = 8),
+    legend.title = element_text(size = 8.5),
+    legend.key.height = unit(4, "mm"),
+    legend.key.width = unit(5, "mm"),
+    legend.box.spacing = unit(1, "mm"),
+    legend.margin = margin(0, 0, 0, 0),
+    plot.margin = margin(0, 0, 0, 0)
+  ) +
+  annotate(
+    "text",
+    x = -57,
+    y = 5,
+    label = 2024,
+    size = 3.5,
+    hjust = 0.5
+  )
+
+fig_degr_map = ggarrange(starlink_degr_2022 + theme(legend.position = "none"), 
+                         starlink_degr_2024,
+                         ncol = 2, nrow = 1,
+                         common.legend = T, legend = "bottom")
+```
+
+
+## Fig. 1
+
+**Internet access and forest degradation in the Brazilian Legal Amazon**
+
+```{r Fig1, echo=F, fig.height=3.4, fig.width=8, dpi=200}
+print(fig_degr_map)
+```
+
+
+
+## Fig. 2
+
+**Placebo tests for forest degradation and mobile coverage**
+
+```{r Fig2, echo=F, fig.height=3.5, fig.width=6, dpi=200}
+print(fig_es_degr)
+```
+
+
+
+## Fig. 3
+
+**Impact of Starlink on Amazonian forest degradation**
+
+```{r Fig3, echo=F, fig.height=2.5, fig.width=8, dpi=200}
+p = ggarrange(
+  fig_degr_mun_area + labs(y = "Degradation (% munic. area)", title=NULL) +
+    theme(plot.margin = margin(l = 5, r = 30)),
+  fig_degr_mun_n + labs(y = "Degradation (flags per 1,000 km²)", title=NULL) +
+    theme(axis.text.y = element_blank(),
+          panel.grid.minor.x = element_line(color = "grey85", linewidth = 0.3)), 
+  ncol = 2,
+  common.legend = TRUE,
+  legend = "right",
+  widths = c(1.0, .85)
+)
+
+print(
+  annotate_figure(p, top = text_grob(paste0("a", paste0(rep(" ", 40), collapse=" "),
+                                            "b", paste0(rep(" ", 28), collapse=" ")),
+                                     face = "bold", size = 11))
+  )
+
+```
+
+
+
+
+## Fig. 4
+
+**Impact of Starlink on environmental enforcement**
+
+```{r Fig4, echo=F, fig.height=3, fig.width=6, dpi=200}
+print(
+  fig_fines_mun + labs(y = "Fines by infraction type (per 1,000 km²)") +
+    labs(title = NULL) + theme(legend.position = "right")
+  )
+```
+
+
+
+## Fig. 5
+
+**Impact of Starlink on forest conversion**
+
+```{r Fig5, echo=F, fig.height=3, fig.width=6, dpi=200}
+print(
+  fig_forest_conv + labs(y = "Forest cover change (%)") +
+    theme(legend.position = "right")
+  )
+```
+
+
+
+## Fig. 6
+
+**Impact on pollution and human health**
+
+```{r Fig6, echo=F, fig.height=4.0, fig.width=8, dpi=200}
+print(fig_pollut + labs(title = paste0("     a", paste0(rep(" ", 35), collapse = " "), "b")))
+```
+
+
+
+
+
+## Table S1
+
+**Descriptive statistics (2017-2024).**
+
+```{r TableS1, R.options = list(width = 1200), echo=F}
+tab_stat = cbind(
+  tab_stat_2017_2021[,1:2],
+  tab_stat_2022_2024[,2]
+  )
+colnames(tab_stat) = NULL
+tab_stat[1,] = c("Variables                             ",
+                 "2017-2021       ", "2022-2024       ")
+tab_stat = tab_stat[!grepl("TI|UC", tab_stat[[1]]),]
+print(tab_stat)
+```
+
+
+## Table S2
+
+**First-stage regression results**
+
+```{r TableS2, R.options = list(width = 1200), echo=F}
+print(tab_1st)
+print(tab_1stA)
+print(tab_1stB)
+```
+
+
+## Fig. S1
+
+**Impact of Starlink on forest degradation by potential soybean yield with high-technology**
+
+```{r FigS1, echo=F, fig.height=3, fig.width=6, dpi=200}
+print(fig_het_soyield_ful_mun_high + labs(title = NULL))
+```
+
+
+
