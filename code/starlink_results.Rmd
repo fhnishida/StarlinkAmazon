@@ -30,8 +30,8 @@ library(fixest)
 library(tidyverse)
 library(ggpubr)
 
-# Setting the working directory (root)
-setwd(".../code")
+# Setting the working directory ('code' folder)
+setwd("C:/Users/fhnis/OneDrive - Insper/Starlink/publish/code")
 
 # DETER filename (for creating figure)
 DETER_zip = "deter-amz-public-2025set01.zip"
@@ -1014,7 +1014,6 @@ munic_sf = st_read("/vsizip/../data/municipalities_legal_amazon.zip/municipaliti
 # Mobile Coverage Shapefile
 # Aggregate KML files and export as GEOPKG
 # List of KML files inside a ZIP (CRS: WGS 84)
-  # https://dados.gov.br/dados/conjuntos-dados/cobertura_movel
 uf_list = c("ac","am","ap","ma","mt","pa","ro","rr","to")
 
 coverage = data.frame()
@@ -1365,7 +1364,6 @@ print(tab_1stB)
 ```{r FigS1, echo=F, fig.height=3, fig.width=6, dpi=200}
 print(fig_het_soyield_ful_mun_high + labs(title = NULL))
 ```
-
 
 
 
