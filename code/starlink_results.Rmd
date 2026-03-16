@@ -31,7 +31,7 @@ library(tidyverse)
 library(ggpubr)
 
 # Setting the working directory ('code' folder)
-setwd("C:/Users/fhnis/OneDrive - Insper/Starlink/publish/code")
+setwd("path/to/code")
 
 # DETER filename (for creating figure)
 DETER_zip = "deter-amz-public-2025set01.zip"
