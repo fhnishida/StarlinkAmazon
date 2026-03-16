@@ -21,7 +21,7 @@
   library(terra) 
   
   # Setting the working directory (root)
-  setwd("C:/Users/fhnis/OneDrive - Insper/Starlink/publish/code")
+  setwd("path/to/code")
   
   # Name of DETER shapefile (update with your version)
   DETER_zip = "deter-amz-public-2025set01.zip"
