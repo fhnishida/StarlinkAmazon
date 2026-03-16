@@ -1,4 +1,4 @@
-# Replication code for "Effects of Starlink adoption on forest degradation in the Amazon" (2026)
+# Replication code for "The Effects of Starlink adoption on forest degradation in the Amazon" (2026)
 ### by Borges, Komatsu, Maturano, Nishida, and Menezes Filho
 
 ---
@@ -70,7 +70,7 @@ At the top of `starlink_dataset.R`, update the `setwd()` call to point to the
 root of this repository on your machine:
 
 ```r
-setwd("/path/to/this/repository")
+setwd("/path/to/code")
 ```
 
 and the DETER dataset name (depends on the date you downloaded):
@@ -82,8 +82,7 @@ Do the same in the `Initialization` chunk of `starlink_results.Rmd`.
 
 #### Step 4 — Build the dataset
 
-Open `starlink_dataset.R` in RStudio and run it in full (Ctrl+Shift+Enter or
-`source("starlink_dataset.R")`).
+Open `starlink_dataset.R` in RStudio and run it in full (Ctrl+Shift+Enter or `source("starlink_dataset.R")`).
 
 > ⚠️ **Runtime warning:** Some dataset process can take **several hours**
 > depending on available RAM and CPU. In particular, particulate matter extraction (from CAMS-EAC4) 
@@ -108,14 +107,15 @@ output HTML file.
 
 ```
 .
-├── starlink_dataset.R            # Step 1 — builds the analytical dataset
-├── starlink_results.Rmd            # Step 2 — produces all results
 ├── README.md                       # This file
+└── code/
+│   ├── starlink_dataset.R          # Step 1 — builds the analytical dataset
+│   └── starlink_results.Rmd        # Step 2 — produces all results and figures
 └── data/
-    ├── [raw files]                 # Downloaded by the user (see README_data.md)
+    ├── [raw files]                 # Downloaded by the user (see README.md)
     └── processed/                
         └── [intermediary files]    # Created automatically by starlink_dataset.R
-        └── analytical_dataset.dta  # Created automatically by starlink_dataset.R
+        └── analytical_dataset.dta  # Processed dataset to be used in starlink_results.Rmd
 ```
 
 
