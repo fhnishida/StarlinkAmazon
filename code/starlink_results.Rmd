@@ -107,7 +107,7 @@ var_names = rbind(
       c("r_n_mun_deter_degr_wood","   selective-cutting (flags per 1,000 km²)", "out"),
       c("r_n_mun_deter_degr_outr","   other means (flags per 1,000 km²)", "out"),
   
-  c("sh_nonflo","Forest replaced (km²)", "out"),
+  c("sh_nonflo","Forest replaced (% forested area)", "out"),
       c("sh_veg", "   by natural non-forest area", "out"),
       c("sh_agr_agr", "   by cropland", "out"),
       c("sh_agr_pec", "   by pasture", "out"),
