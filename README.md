@@ -112,7 +112,7 @@ output HTML file.
 │   ├── starlink_dataset.R          # Step 1 — builds the analytical dataset
 │   └── starlink_results.Rmd        # Step 2 — produces all results and figures
 └── data/
-    ├── [raw files]                 # Downloaded by the user (see README.md)
+    ├── [raw files]                 # Downloaded by the user (see 2. Downloading Datasets)
     └── processed/                
         └── [intermediary files]    # Created automatically by starlink_dataset.R
         └── analytical_dataset.dta  # Processed dataset to be used in starlink_results.Rmd
