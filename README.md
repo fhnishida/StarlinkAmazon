@@ -333,7 +333,7 @@ data/
 | **File**    | `data_sfc.nc` |
 |-------------|--------|
 | **Source**  | Copernicus Atmosphere Monitoring Service (CAMS) |
-| **URL**     | <https://ads.atmosphere.copernicus.eu/data/cams-global-reanalysis-eac4?tab=download> |
+| **URL**     | <https://ads.atmosphere.copernicus.eu/datasets/cams-global-reanalysis-eac4?tab=download> |
 
 **Instructions:**
 
