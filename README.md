@@ -1,4 +1,4 @@
-# Replication code for "The Effects of Starlink adoption on forest degradation in the Amazon" (2026)
+<img width="170" height="25" alt="image" src="https://github.com/user-attachments/assets/19d6a41a-1801-4b23-9e00-6bfd31dca8f7" /># Replication code for "The Effects of Starlink adoption on forest degradation in the Amazon" (2026)
 ### by Borges, Komatsu, Maturano, Nishida, and Menezes Filho
 
 ---
@@ -163,6 +163,7 @@ data/
 |-------------|--------|
 | **Source**  | TerraBrasilis — INPE |
 | **URL**     | <https://terrabrasilis.dpi.inpe.br/download/dataset/legal-amz-aux/vector/municipalities_legal_amazon.zip> |
+| **License**  | CC0 |
 
 **Instructions:** Direct download — click the URL above (or paste it in your browser) and save the `.zip` file to `data/` without extracting it; the script reads directly from the archive.
 
@@ -175,6 +176,7 @@ data/
 |-------------|--------|
 | **Source**  | IBGE — SIDRA |
 | **URL**     | <https://sidra.ibge.gov.br/tabela/4714> |
+| **License**  | CC0 |
 
 **Instructions:**
 
@@ -194,6 +196,7 @@ data/
 |-------------|--------|
 | **Source**  | IBGE |
 | **URL**     | <https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/27385-localidades.html> |
+| **License**  | CC0 |
 
 **Instructions:**
 
@@ -210,6 +213,7 @@ data/
 |-------------|--------|
 | **Source**  | ANA — National Water and Sanitation Agency |
 | **URL**     | <https://metadados.snirh.gov.br/geonetwork/srv/por/catalog.search#/metadata/0f57c8a0-6a0f-4283-8ce3-114ba904b9fe> |
+| **License**  | CC0 |
 
 **Instructions:**
 
@@ -228,6 +232,7 @@ data/
 |-------------|--------|
 | **Source**  | ANATEL — National Telecommunications Agency |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/cobertura_movel> |
+| **License**  | CC BY |
 
 **Instructions:**
 
@@ -245,6 +250,7 @@ data/
 |-------------|--------|
 | **Source**  | ANATEL — National Telecommunications Agency |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/cobertura_movel> |
+| **License**  | CC BY |
 
 **Instructions:**
 
@@ -262,6 +268,7 @@ data/
 |-------------|--------|
 | **Source**  | TerraBrasilis — INPE |
 | **URL**     | <https://terrabrasilis.dpi.inpe.br/downloads/> |
+| **License**  | CC BY-SA 4.0 |
 
 **Instructions:**
 
@@ -280,6 +287,7 @@ data/
 |-------------|--------|
 | **Source**  | IBAMA — Brazilian Institute of Environment and Renewable Natural Resources |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/fiscalizacao-auto-de-infracao> |
+| **License**  | CC0 |
 
 **Instructions:**
 
@@ -296,6 +304,7 @@ data/
 |-------------|--------|
 | **Source**  | ICMBio — Chico Mendes Institute for Biodiversity Conservation |
 | **URL**     | <[https://dados.gov.br/dados/conjuntos-dados/autos-de-infracao-icmbio](https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais/mapa-tematico-e-dados-geoestatisticos-das-unidades-de-conservacao-federais)> |
+| **License**  | CC0 |
 
 **Instructions:**
 
@@ -314,6 +323,7 @@ data/
 |-------------|--------|
 | **Source**  | ANATEL — National Telecommunications Agency |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/acessos---banda-larga-fixa> |
+| **License**  | CC BY |
 
 **Instructions:**
 
@@ -334,6 +344,7 @@ data/
 |-------------|--------|
 | **Source**  | Copernicus Atmosphere Monitoring Service (CAMS) |
 | **URL**     | <https://ads.atmosphere.copernicus.eu/datasets/cams-global-reanalysis-eac4?tab=download> |
+| **License**  | CC BY 4.0 |
 
 **Instructions:**
 
@@ -361,6 +372,7 @@ data/
 |-------------|--------|
 | **Source**  | CHC — University of California, Santa Barbara |
 | **URL**     | <https://data.chc.ucsb.edu/experimental/CHIRTS-ERA5/tmax/tifs/monthly/> |
+| **License**  | CC BY 4.0 |
 
 **Instructions:**
 
@@ -377,6 +389,7 @@ data/
 |-------------|--------|
 | **Source**  | CHC — University of California, Santa Barbara |
 | **URL**     | <https://data.chc.ucsb.edu/products/CHIRPS/v3.0/monthly/latam/tifs/> |
+| **License**  | CC BY 4.0 |
 
 **Instructions:**
 
@@ -395,6 +408,7 @@ data/
 |-------------|--------|
 | **Source**  | Ministério da Saúde — DATASUS |
 | **URL**     | <https://dados.gov.br/dados/conjuntos-dados/sim-1979-2019> |
+| **License**  | CC BY-ND 3.0 |
 
 **Instructions:**
 
@@ -418,6 +432,7 @@ data/
 |-------------|--------|
 | **Source**  | MapBiomas   |
 | **URL**     | Direct link below |
+| **License**  | CC BY 4.0 |
 
 **Instructions:**
 
@@ -445,6 +460,7 @@ https://storage.googleapis.com/mapbiomas-public/initiatives/brasil/collection_10
 |-------------|--------|
 | **Source**  | FAO — Global Agro-Ecological Zones v5 |
 | **URL**     | <https://storage.googleapis.com/fao-gismgr-gaez-v5-data/DATA/GAEZ-V5/MAPSET/RES05-YXX/GAEZ-V5.RES05-YXX.HP0120.AGERA5.HIST.SOY.HRLM.tif> |
+| **License**  | CC BY-NC-SA 3.0 IGO |
 
 **Instructions:**
 
