@@ -1,4 +1,4 @@
-<img width="170" height="25" alt="image" src="https://github.com/user-attachments/assets/19d6a41a-1801-4b23-9e00-6bfd31dca8f7" /># Replication code for "The Effects of Starlink adoption on forest degradation in the Amazon" (2026)
+# Replication code for "The Effects of Starlink adoption on forest degradation in the Amazon" (2026)
 ### by Borges, Komatsu, Maturano, Nishida, and Menezes Filho
 
 ---
